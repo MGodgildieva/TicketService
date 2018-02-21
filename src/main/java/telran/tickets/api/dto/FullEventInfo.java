@@ -1,9 +1,13 @@
 package telran.tickets.api.dto;
 
+import telran.tickets.entities.objects.Event;
+
 public class FullEventInfo {
-	private String orgId;
+	private String email;
+	private String eventId;
 	private String artist;
 	private String title;
+	private String city;
 	private String date;
 	private String time;
 	private String ticketCount;
@@ -11,11 +15,13 @@ public class FullEventInfo {
 	private String priceRange;
 	private String imageUrl;
 	private boolean favourite;
-	public FullEventInfo(String organiserId, String artist, String title, String date, String time, String ticketCount,
+	public FullEventInfo(String email, String eventId, String artist, String title, String city, String date, String time, String ticketCount,
 			String description, String priceRange, String imageUrl, boolean favourite) {
-		this.orgId = organiserId;
+		this.email = email;
+		this.eventId = eventId;
 		this.artist = artist;
 		this.title = title;
+		this.city = city;
 		this.date = date;
 		this.time = time;
 		this.ticketCount = ticketCount;
@@ -24,16 +30,45 @@ public class FullEventInfo {
 		this.imageUrl = imageUrl;
 		this.favourite = favourite;
 	}
+	public FullEventInfo(Event event) {
+		this.eventId = event.getEventId().toString();
+		this.artist = event.getArtist();
+		this.title = event.getTitle();
+		this.city = event.getCity();
+		this.date = event.getDate();
+		this.time = event.getTime();
+		//this.ticketCount = ((Integer)event.getBoughtTickets().size()).toString();
+		this.description = event.getDescription();
+		//this.priceRange = priceRange;
+		this.imageUrl = event.getImageUrl();
+		//this.favourite = favourite;
+	}
 	public FullEventInfo() {
 	}
-	public String getOrganiserId() {
-		return orgId;
+	public String getEmail() {
+		return email;
+	}
+	
+	public String getEventId() {
+		return eventId;
+	}
+	public void setTicketCount(String ticketCount) {
+		this.ticketCount = ticketCount;
+	}
+	public void setPriceRange(String priceRange) {
+		this.priceRange = priceRange;
+	}
+	public void setFavourite(boolean favourite) {
+		this.favourite = favourite;
 	}
 	public String getArtist() {
 		return artist;
 	}
 	public String getTitle() {
 		return title;
+	}
+	public String getCity() {
+		return city;
 	}
 	public String getDate() {
 		return date;

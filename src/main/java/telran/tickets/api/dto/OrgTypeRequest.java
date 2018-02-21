@@ -1,16 +1,16 @@
 package telran.tickets.api.dto;
 
 public class OrgTypeRequest {
-	private String orgId;
+	private String email;
 	private String type;
-	public String getOrgId() {
-		return orgId;
+	public String getEmail() {
+		return email;
 	}
 	public String getType() {
 		return type;
 	}
-	public OrgTypeRequest(String orgId, String type) {
-		this.orgId = orgId;
+	public OrgTypeRequest(String email, String type) {
+		this.email = email;
 		this.type = type;
 	}
 	public OrgTypeRequest() {

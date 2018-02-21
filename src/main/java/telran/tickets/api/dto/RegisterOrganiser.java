@@ -1,5 +1,7 @@
 package telran.tickets.api.dto;
 
+import telran.tickets.entities.users.Organiser;
+
 public class RegisterOrganiser {
 	private String license;
 	private String email;
@@ -25,6 +27,19 @@ public class RegisterOrganiser {
 		this.house = house;
 		this.postcode = postcode;
 		this.additionalInfo = additionalInfo;
+	}
+	public RegisterOrganiser(Organiser organiser) {
+		this.license = organiser.getLicense();
+		this.email = organiser.getEmail();
+		this.password = organiser.getPassword();
+		this.companyName = organiser.getCompanyName();
+		this.phone = organiser.getPhone();
+		this.country = organiser.getCountry();
+		this.city = organiser.getCity();
+		this.street = organiser.getStreet();
+		this.house = organiser.getHouse();
+		this.postcode = organiser.getPostcode();
+		this.additionalInfo = organiser.getAdditionalInfo();
 	}
 	public RegisterOrganiser() {
 	}

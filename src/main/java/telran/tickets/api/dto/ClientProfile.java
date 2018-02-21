@@ -1,25 +1,8 @@
-package telran.tickets.entities.users;
+package telran.tickets.api.dto;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import telran.tickets.entities.users.Client;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-
-import telran.tickets.api.dto.RegisterClient;
-import telran.tickets.entities.objects.Event;
-import telran.tickets.entities.objects.Ticket;
-
-@Entity
-public class Client implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
+public class ClientProfile {
 	String email;
 	String name;
 	String surname;
@@ -35,24 +18,14 @@ public class Client implements Serializable {
 	String phone;
 	String additionalPhone;
 	String company;
-	@ManyToMany
-	Set<Event> favourite;
-	@OneToMany
-	Set<Ticket> boughtTickets;
-	
-	
-
-	public Client() {
-	}
-
-	public Client(String name, String surname, String honour, String email, String password,
+	public ClientProfile(String email, String name, String surname, String honour, String type, String password,
 			String country, String city, String street, String house, String postcode, String additionalInfo,
 			String phone, String additionalPhone, String company) {
+		this.email = email;
 		this.name = name;
 		this.surname = surname;
 		this.honour = honour;
-		this.type = "Client";
-		this.email = email;
+		this.type = type;
 		this.password = password;
 		this.country = country;
 		this.city = city;
@@ -63,13 +36,16 @@ public class Client implements Serializable {
 		this.phone = phone;
 		this.additionalPhone = additionalPhone;
 		this.company = company;
-		this.favourite = new HashSet<>();
-		this.boughtTickets = new HashSet<>();
 	}
-
-	public Client(RegisterClient client) {
-		this.type = "Client";
+	public ClientProfile() {
+	}
+	
+	public ClientProfile (Client client) {
 		this.email = client.getEmail();
+		this.name = client.getName();
+		this.surname = client.getSurname();
+		this.honour = client.getHonour();
+		this.type = client.getType();
 		this.password = client.getPassword();
 		this.country = client.getCountry();
 		this.city = client.getCity();
@@ -78,185 +54,100 @@ public class Client implements Serializable {
 		this.postcode = client.getPostcode();
 		this.additionalInfo = client.getAdditionalInfo();
 		this.phone = client.getPhone();
-		this.name = client.getName();
-		this.surname = client.getSurname();
-		this.honour = client.getHonour();
 		this.additionalPhone = client.getAdditionalPhone();
 		this.company = client.getCompany();
-		this.favourite = new HashSet<>();
-		this.boughtTickets = new HashSet<>();
-
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public String getHonour() {
-		return honour;
-	}
-
-	public void setHonour(String honour) {
-		this.honour = honour;
-	}
-
-	public String getAdditionalPhone() {
-		return additionalPhone;
-	}
-
-	public void setAdditionalPhone(String additionalPhone) {
-		this.additionalPhone = additionalPhone;
-	}
-
-	public String getCompany() {
-		return company;
-	}
-
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	public Set<Event> getFavourite() {
-		return favourite;
-	}
-
-	public void setFavourite(Set<Event> favourite) {
-		this.favourite = favourite;
-	}
-
-	public Set<Ticket> getBoughtTickets() {
-		return boughtTickets;
-	}
-
-	public void setBoughtTickets(Set<Ticket> boughtTickets) {
-		this.boughtTickets = boughtTickets;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public String getEmail() {
 		return email;
 	}
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getSurname() {
+		return surname;
+	}
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+	public String getHonour() {
+		return honour;
+	}
+	public void setHonour(String honour) {
+		this.honour = honour;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getPassword() {
 		return password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 	public String getCountry() {
 		return country;
 	}
-
 	public void setCountry(String country) {
 		this.country = country;
 	}
-
 	public String getCity() {
 		return city;
 	}
-
 	public void setCity(String city) {
 		this.city = city;
 	}
-
 	public String getStreet() {
 		return street;
 	}
-
 	public void setStreet(String street) {
 		this.street = street;
 	}
-
 	public String getHouse() {
 		return house;
 	}
-
 	public void setHouse(String house) {
 		this.house = house;
 	}
-
 	public String getPostcode() {
 		return postcode;
 	}
-
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
-
 	public String getAdditionalInfo() {
 		return additionalInfo;
 	}
-
 	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
 	}
-
 	public String getPhone() {
 		return phone;
 	}
-
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		return result;
+	public String getAdditionalPhone() {
+		return additionalPhone;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Client)) {
-			return false;
-		}
-		Client other = (Client) obj;
-		if (email == null) {
-			if (other.email != null) {
-				return false;
-			}
-		} else if (!email.equals(other.email)) {
-			return false;
-		}
-		return true;
+	public void setAdditionalPhone(String additionalPhone) {
+		this.additionalPhone = additionalPhone;
 	}
-
+	public String getCompany() {
+		return company;
+	}
+	public void setCompany(String company) {
+		this.company = company;
+	}
+	
+	
 
 }

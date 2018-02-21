@@ -1,6 +1,7 @@
 package telran.tickets.entities.users;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -8,22 +9,22 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import telran.tickets.api.dto.AddOrganiser;
+import telran.tickets.api.dto.RegisterOrganiser;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.Hall;
 
 @Entity
-public class Organiser implements Serializable{
+public class Organiser implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	String orgId;
-	static Integer orgCount=0;
+	String email;
 	String companyName;
 	String license;
 	String type;
-	String email;
 	String password;
 	String country;
 	String city;
@@ -37,13 +38,9 @@ public class Organiser implements Serializable{
 	@ManyToMany
 	Set<Hall> halls;
 	Boolean isBanned;
-	
-	
 
-	public Organiser(String companyName, String license, String email, String password, String country,
-			String city, String street, String house, String postcode, String additionalInfo, String phone,
-			Set<Event> events, Set<Hall> halls, Boolean isBanned) {
-		orgId="O"+(++orgCount);
+	public Organiser(String companyName, String license, String email, String password, String country, String city,
+			String street, String house, String postcode, String additionalInfo, String phone, Boolean isBanned) {
 		this.companyName = companyName;
 		this.license = license;
 		this.type = "Org";
@@ -56,20 +53,47 @@ public class Organiser implements Serializable{
 		this.postcode = postcode;
 		this.additionalInfo = additionalInfo;
 		this.phone = phone;
-		this.events = events;
-		this.halls = halls;
+		this.events = new HashSet<>();
+		this.halls = new HashSet<>();
 		this.isBanned = isBanned;
 	}
 
-
-	public String getOrgId() {
-		return orgId;
+	public Organiser(RegisterOrganiser org) {
+		this.companyName = org.getCompanyName();
+		this.license = org.getLicense();
+		this.type = "Org";
+		this.email = org.getEmail();
+		this.password = org.getPassword();
+		this.country = org.getCountry();
+		this.city = org.getCity();
+		this.street = org.getStreet();
+		this.house = org.getHouse();
+		this.postcode = org.getPostcode();
+		this.additionalInfo = org.getAdditionalInfo();
+		this.phone = org.getPhone();
+		this.events = new HashSet<>();
+		this.halls = new HashSet<>();
+		this.isBanned = false;
+	}
+	public Organiser(AddOrganiser org) {
+		this.companyName = org.getCompanyName();
+		this.type = "Org";
+		this.email = org.getEmail();
+		this.password = org.getPassword();
+		this.country = org.getCountry();
+		this.city = org.getCity();
+		this.street = org.getStreet();
+		this.house = org.getHouse();
+		this.postcode = org.getPostcode();
+		this.additionalInfo = org.getAdditionalInfo();
+		this.phone = org.getPhone();
+		this.events = new HashSet<>();
+		this.halls = new HashSet<>();
+		this.isBanned = false;
 	}
 
-	public void setOrgId(String orgId) {
-		this.orgId = orgId;
+	public Organiser() {
 	}
-
 
 	public String getCompanyName() {
 		return companyName;
@@ -119,107 +143,87 @@ public class Organiser implements Serializable{
 		return type;
 	}
 
-
 	public void setType(String type) {
 		this.type = type;
 	}
-
 
 	public String getEmail() {
 		return email;
 	}
 
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 
 	public String getPassword() {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 
 	public String getCountry() {
 		return country;
 	}
 
-
 	public void setCountry(String country) {
 		this.country = country;
 	}
-
 
 	public String getCity() {
 		return city;
 	}
 
-
 	public void setCity(String city) {
 		this.city = city;
 	}
-
 
 	public String getStreet() {
 		return street;
 	}
 
-
 	public void setStreet(String street) {
 		this.street = street;
 	}
-
 
 	public String getHouse() {
 		return house;
 	}
 
-
 	public void setHouse(String house) {
 		this.house = house;
 	}
-
 
 	public String getPostcode() {
 		return postcode;
 	}
 
-
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
-
 
 	public String getAdditionalInfo() {
 		return additionalInfo;
 	}
 
-
 	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
 	}
-
 
 	public String getPhone() {
 		return phone;
 	}
 
-
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((orgId == null) ? 0 : orgId.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		return result;
 	}
 
@@ -235,15 +239,14 @@ public class Organiser implements Serializable{
 			return false;
 		}
 		Organiser other = (Organiser) obj;
-		if (orgId == null) {
-			if (other.orgId != null) {
+		if (email == null) {
+			if (other.email != null) {
 				return false;
 			}
-		} else if (!orgId.equals(other.orgId)) {
+		} else if (!email.equals(other.email)) {
 			return false;
 		}
 		return true;
 	}
-	
 
 }

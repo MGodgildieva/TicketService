@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import telran.tickets.api.APIConstants;
+import telran.tickets.api.dto.AddEvent;
 import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
+import telran.tickets.api.dto.ClientProfile;
 import telran.tickets.api.dto.EditEvent;
 import telran.tickets.api.dto.EventClientRequest;
 import telran.tickets.api.dto.EventOrgRequest;
@@ -30,9 +32,7 @@ import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.TicketRequest;
 import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.api.dto.VisibleRequest;
-import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.Hall;
-import telran.tickets.entities.users.Client;
 import telran.tickets.interfaces.IAdmin;
 import telran.tickets.interfaces.IClient;
 import telran.tickets.interfaces.IGeneral;
@@ -57,12 +57,6 @@ public class ServerAppl {
 		return clientRepository.register(request);
 	}
 
-	@PostMapping(APIConstants.LOGIN)
-	public LoginResponse login(@RequestBody LoginRequest request) {
-		// TODO
-		return new LoginResponse();
-	}
-
 	@PostMapping(APIConstants.FORGOTTEN_PASSWORD)
 	public String forgottenPassword(@RequestBody String email) {
 		return clientRepository.forgottenPassword(email);
@@ -79,17 +73,17 @@ public class ServerAppl {
 	}
 
 	@PostMapping(APIConstants.FAVOURITE)
-	public Iterable<ShortEventInfo> getFavourite(@RequestBody String clientId) {
-		return clientRepository.getFavourite(clientId);
+	public Iterable<ShortEventInfo> getFavourite(@RequestBody String email) {
+		return clientRepository.getFavourite(email);
 	}
 
 	@PostMapping(APIConstants.CLIENT_PROFILE)
-	public Client getProfile(@RequestBody String clientId) {
-		return clientRepository.getProfile(clientId);
+	public ClientProfile getProfile(@RequestBody String email) {
+		return clientRepository.getProfile(email);
 	}
 
 	@PutMapping(APIConstants.CHANGE_PROFILE)
-	public Client changeProfile(@RequestBody Client request) {
+	public ClientProfile changeProfile(@RequestBody ClientProfile request) {
 		return clientRepository.changeProfile(request);
 	}
 
@@ -100,8 +94,8 @@ public class ServerAppl {
 	}
 
 	@PostMapping(APIConstants.ORG_EVENTS_BY_DATE)
-	public Iterable<ShortEventInfo> orgEventsByDate(@RequestBody String orgId) {
-		return orgRepository.getEventsByDate(orgId);
+	public Iterable<ShortEventInfo> orgEventsByDate(@RequestBody String email) {
+		return orgRepository.getEventsByDate(email);
 	}
 
 	@PostMapping(APIConstants.ORG_EVENTS_BY_HALL)
@@ -120,7 +114,7 @@ public class ServerAppl {
 	}
 
 	@PostMapping(APIConstants.ADD_EVENT) //TODO пересмотреть dto
-	public boolean addEvent(@RequestBody Event request) {
+	public boolean addEvent(@RequestBody AddEvent request) {
 		return orgRepository.addEvent(request);
 	}
 
@@ -135,16 +129,16 @@ public class ServerAppl {
 	}
 
 	@PostMapping(APIConstants.ORG_PROFILE)
-	public RegisterOrganiser getOrganiserProfile(@RequestBody String orgId) {
-		return orgRepository.getProfile(orgId);
+	public RegisterOrganiser getOrganiserProfile(@RequestBody String email) {
+		return orgRepository.getProfile(email);
 	}
 
-	@PostMapping(APIConstants.SEE_HALLS)
-	public Iterable<Hall> getHalls(@RequestBody String orgId) {
-		return orgRepository.getHalls(orgId);
+	@PostMapping(APIConstants.SEE_HALLS) //TODO dto
+	public Iterable<Hall> getHalls(@RequestBody String email) {
+		return orgRepository.getHalls(email);
 	}
 
-	@PostMapping(APIConstants.ADD_HALL)
+	@PostMapping(APIConstants.ADD_HALL) //TODO dto
 	public boolean addHall(@RequestBody HallRequest request) {
 		return orgRepository.addHall(request);
 	}
@@ -162,8 +156,8 @@ public class ServerAppl {
 	}
 
 	@DeleteMapping(APIConstants.DELETE_ORGANIZER)
-	public boolean deleteOrganiser(@RequestBody String orgId) {
-		return adminRepository.deleteOrganiser(orgId);
+	public boolean deleteOrganiser(@RequestBody String email) {
+		return adminRepository.deleteOrganiser(email);
 	}
 
 	@PostMapping(APIConstants.BAN_ORG)
@@ -173,9 +167,9 @@ public class ServerAppl {
 	
 	//General
 
-	@GetMapping(APIConstants.INFO)
-	public String getInfo() {
-		return genRepository.getInfo();
+	@PostMapping(APIConstants.LOGIN)
+	public LoginResponse login(@RequestBody LoginRequest request) {
+		return genRepository.login(request);
 	}
 
 	@PostMapping(APIConstants.EVENTS_BY_DATE)

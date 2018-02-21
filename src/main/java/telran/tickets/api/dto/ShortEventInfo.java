@@ -1,5 +1,7 @@
 package telran.tickets.api.dto;
 
+import telran.tickets.entities.objects.Event;
+
 public class ShortEventInfo {
 	private String eventId;
 	private String title;
@@ -13,6 +15,14 @@ public class ShortEventInfo {
 		this.date = date;
 		this.imageUrl = imageUrl;
 	}
+	public ShortEventInfo(Event event) {
+		this.eventId = event.getEventId().toString();
+		this.title = event.getTitle();
+		this.artist = event.getArtist();
+		this.date = event.getDate();
+		this.imageUrl = event.getImageUrl();
+	}
+	
 	public ShortEventInfo() {
 	}
 	public String getEventId() {

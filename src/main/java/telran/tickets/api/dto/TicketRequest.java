@@ -2,15 +2,15 @@ package telran.tickets.api.dto;
 
 public class TicketRequest {
 	private String hallId;
-	private String clientId;
+	private String email;
 	private String eventId;
 	private String ticketPrice;
 	private String row;
 	private String place;
 	
-	public TicketRequest(String hallId, String clientId, String eventId, String ticketPrice, String row, String place) {
+	public TicketRequest(String hallId, String email, String eventId, String ticketPrice, String row, String place) {
 		this.hallId = hallId;
-		this.clientId = clientId;
+		this.email = email;
 		this.eventId = eventId;
 		this.ticketPrice = ticketPrice;
 		this.row = row;
@@ -18,8 +18,8 @@ public class TicketRequest {
 	}
 	public TicketRequest() {
 	}
-	public String getClientId() {
-		return clientId;
+	public String getEmail() {
+		return email;
 	}
 	
 	public String getHallId() {

@@ -12,16 +12,13 @@ public class Admin implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	private String adminId;
 	private String email;
 	private String password;
 	private String type;
-	private static int adminCounter = 0;
 	
 	
 
 	public Admin(String email, String password) {
-		adminId = "A" + ++adminCounter;
 		this.type = "Admin";
 		this.email = email;
 		this.password = password;
@@ -29,10 +26,6 @@ public class Admin implements Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	public String getAdminId() {
-		return adminId;
 	}
 	
 	public String getEmail() {
@@ -51,7 +44,7 @@ public class Admin implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((adminId == null) ? 0 : adminId.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		return result;
 	}
 
@@ -67,15 +60,17 @@ public class Admin implements Serializable{
 			return false;
 		}
 		Admin other = (Admin) obj;
-		if (adminId == null) {
-			if (other.adminId != null) {
+		if (email == null) {
+			if (other.email != null) {
 				return false;
 			}
-		} else if (!adminId.equals(other.adminId)) {
+		} else if (!email.equals(other.email)) {
 			return false;
 		}
 		return true;
 	}
+
+	
 	
 
 }

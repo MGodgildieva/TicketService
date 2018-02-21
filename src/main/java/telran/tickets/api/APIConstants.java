@@ -6,7 +6,7 @@ public interface APIConstants {
 	public static final String DATE = "/date";
 	public static final String PLACE = "/place";
 	public static final String TYPE = "/type";
-	public static final String HALL = "/hall";
+	public static final String HALL = "/hallId";
 	public static final String PROFILE = "/profile";
 	
 	public static final String CLIENT = "/client";
@@ -23,7 +23,6 @@ public interface APIConstants {
 	public static final String ADD_TO_FAVOURITE = ADD + "/favourite";
 	public static final String LANG = "/lang";
 	public static final String FAVOURITE = "/favourite";
-	public static final String INFO = "/info";
 	public static final String CLIENT_PROFILE = CLIENT + PROFILE;
 	public static final String CHANGE_PROFILE = PROFILE;
 	public static final String ORG = "/organizer";
