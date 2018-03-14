@@ -1,27 +1,63 @@
 package telran.tickets.entities.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import telran.tickets.api.dto.HallRequest;
+import telran.tickets.api.dto.HallSeat;
+import telran.tickets.entities.users.Organiser;
 @Entity
 public class Hall {
 	@Id
 	@GeneratedValue()
 	Integer hallId;
+	@ManyToOne(cascade = CascadeType.ALL)
+	Organiser org;
 	String hallName;
 	String city;
 	String street;
 	String house;
 	String description;
-	boolean [][] seats; // есть место, нет места
+	String width;
+	String height;
+	@OneToMany(cascade=CascadeType.ALL, mappedBy = "hall", orphanRemoval = true)
+	List<Seat> seats;
+	@OneToMany(cascade=CascadeType.ALL, mappedBy = "hall", orphanRemoval = true)
+	List<Event> events;
 	public Hall(String hallName, String city, String street, String house, String description,
-			boolean[][] seats) {
+			List<Seat> seats, String width, String height, List<Event> events, Organiser org) {
 		this.hallName = hallName;
 		this.city = city;
 		this.street = street;
 		this.house = house;
 		this.description = description;
 		this.seats = seats;
+		this.width = width;
+		this.height = height;
+		this.events = events;
+		this.org = org;
+	}
+	public Hall(HallRequest request, Organiser org) {
+		this.hallName = request.getHallName();
+		this.city = request.getCity();
+		this.street = request.getStreet();
+		this.house = request.getHouse();
+		this.description = request.getDescription();
+		this.width = request.getWidth();
+		this.height = request.getHeight();
+		this.seats = new ArrayList<>();
+		for (HallSeat hallSeat : request.getHallSeats()) {
+			seats.add(new Seat(hallSeat, this));
+		}
+		this.events = new ArrayList<>();
+		this.org = org;
 	}
 	public Hall() {
 	}
@@ -55,14 +91,27 @@ public class Hall {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public boolean[][] getSeats() {
+	public List<Seat> getSeats() {
 		return seats;
 	}
-	public void setSeats(boolean[][] seats) {
+	public void setSeats(List<Seat> seats) {
 		this.seats = seats;
 	}
 	public Integer getHallId() {
 		return hallId;
+	}
+	
+	public String getWidth() {
+		return width;
+	}
+	public void setWidth(String width) {
+		this.width = width;
+	}
+	public String getHeight() {
+		return height;
+	}
+	public void setHeight(String height) {
+		this.height = height;
 	}
 	@Override
 	public int hashCode() {

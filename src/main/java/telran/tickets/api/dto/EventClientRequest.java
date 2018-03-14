@@ -2,16 +2,16 @@ package telran.tickets.api.dto;
 
 public class EventClientRequest {
 	private String eventId;
-	private String email;
+	private String phone;
 	public String getEventId() {
 		return eventId;
 	}
-	public String getEmail() {
-		return email;
+	public String getPhone() {
+		return phone;
 	}
-	public EventClientRequest(String eventId, String email) {
+	public EventClientRequest(String eventId, String phone) {
 		this.eventId = eventId;
-		this.email = email;
+		this.phone = phone;
 	}
 	public EventClientRequest() {
 	}

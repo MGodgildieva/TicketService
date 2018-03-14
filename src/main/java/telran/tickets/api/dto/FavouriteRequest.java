@@ -1,24 +1,24 @@
 package telran.tickets.api.dto;
 
 public class FavouriteRequest {
-	private String email;
+	private String phone;
 	private String eventId;
-	private boolean favourite;
-	public FavouriteRequest(String email, String eventId, boolean favourite) {
-		this.email = email;
+	private boolean isFavourite;
+	public FavouriteRequest(String phone, String eventId, boolean isFavourite) {
+		this.phone = phone;
 		this.eventId = eventId;
-		this.favourite = favourite;
+		this.isFavourite = isFavourite;
 	}
 	public FavouriteRequest() {
 	}
-	public String getEmail() {
-		return email;
+	public String getPhone() {
+		return phone;
 	}
 	public String getEventId() {
 		return eventId;
 	}
-	public boolean isFavourite() {
-		return favourite;
+	public boolean getIsFavourite() {
+		return isFavourite;
 	}
 	
 	

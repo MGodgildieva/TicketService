@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import telran.tickets.api.dto.AddOrganiser;
@@ -33,9 +33,10 @@ public class Organiser implements Serializable {
 	String postcode;
 	String additionalInfo;
 	String phone;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "org", orphanRemoval = true)
 	Set<Event> events;
-	@ManyToMany
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "org")
+	
 	Set<Hall> halls;
 	Boolean isBanned;
 

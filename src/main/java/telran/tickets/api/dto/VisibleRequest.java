@@ -2,18 +2,18 @@ package telran.tickets.api.dto;
 
 public class VisibleRequest {
 	private String eventId;
-	private boolean isVisible;
+	private boolean isHidden;
 
-	public VisibleRequest(String eventId, boolean isVisible) {
+	public VisibleRequest(String eventId, boolean isHidden) {
 		this.eventId = eventId;
-		this.isVisible = isVisible;
+		this.isHidden = isHidden;
 	}
 
 	public VisibleRequest() {
 	}
 
-	public boolean isVisible() {
-		return isVisible;
+	public boolean getIsHidden() {
+		return isHidden;
 	}
 
 	public String getEventId() {

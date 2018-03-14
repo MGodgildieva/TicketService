@@ -7,7 +7,6 @@ public class ClientProfile {
 	String name;
 	String surname;
 	String honour;
-	String type;
 	String password;
 	String country;
 	String city;
@@ -18,14 +17,13 @@ public class ClientProfile {
 	String phone;
 	String additionalPhone;
 	String company;
-	public ClientProfile(String email, String name, String surname, String honour, String type, String password,
+	public ClientProfile(String email, String name, String surname, String honour, String password,
 			String country, String city, String street, String house, String postcode, String additionalInfo,
 			String phone, String additionalPhone, String company) {
 		this.email = email;
 		this.name = name;
 		this.surname = surname;
 		this.honour = honour;
-		this.type = type;
 		this.password = password;
 		this.country = country;
 		this.city = city;
@@ -45,7 +43,6 @@ public class ClientProfile {
 		this.name = client.getName();
 		this.surname = client.getSurname();
 		this.honour = client.getHonour();
-		this.type = client.getType();
 		this.password = client.getPassword();
 		this.country = client.getCountry();
 		this.city = client.getCity();
@@ -80,12 +77,6 @@ public class ClientProfile {
 	}
 	public void setHonour(String honour) {
 		this.honour = honour;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	public String getPassword() {
 		return password;

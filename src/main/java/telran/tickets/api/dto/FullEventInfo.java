@@ -1,9 +1,11 @@
 package telran.tickets.api.dto;
 
+import java.text.SimpleDateFormat;
+
 import telran.tickets.entities.objects.Event;
 
 public class FullEventInfo {
-	private String email;
+	private String phone;
 	private String eventId;
 	private String artist;
 	private String title;
@@ -15,9 +17,9 @@ public class FullEventInfo {
 	private String priceRange;
 	private String imageUrl;
 	private boolean favourite;
-	public FullEventInfo(String email, String eventId, String artist, String title, String city, String date, String time, String ticketCount,
+	public FullEventInfo(String phone, String eventId, String artist, String title, String city, String date, String time, String ticketCount,
 			String description, String priceRange, String imageUrl, boolean favourite) {
-		this.email = email;
+		this.phone = phone;
 		this.eventId = eventId;
 		this.artist = artist;
 		this.title = title;
@@ -35,7 +37,7 @@ public class FullEventInfo {
 		this.artist = event.getArtist();
 		this.title = event.getTitle();
 		this.city = event.getCity();
-		this.date = event.getDate();
+		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
 		this.time = event.getTime();
 		//this.ticketCount = ((Integer)event.getBoughtTickets().size()).toString();
 		this.description = event.getDescription();
@@ -45,10 +47,13 @@ public class FullEventInfo {
 	}
 	public FullEventInfo() {
 	}
-	public String getEmail() {
-		return email;
+	public String getPhone() {
+		return phone;
 	}
 	
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	public String getEventId() {
 		return eventId;
 	}

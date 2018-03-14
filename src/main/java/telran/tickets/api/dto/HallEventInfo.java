@@ -1,7 +1,12 @@
 package telran.tickets.api.dto;
 
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import telran.tickets.entities.objects.Event;
+import telran.tickets.entities.objects.EventSeat;
+import telran.tickets.entities.objects.Hall;
 
 public class HallEventInfo {
 	private String hallId;
@@ -10,20 +15,33 @@ public class HallEventInfo {
 	private String artist;
 	private String date;
 	private String ticketPriceRange;
-	private Map<String, String[][]> categories;
-	private Set<String> boughtTickets;
+	private EventScheme hallScheme;
 
 	public HallEventInfo(String hallId, String hallName, String eventTitle, String artist, String date,
-			String ticketPriceRange, Map<String, String[][]> categories, Set<String> boughtTickets) {
+			String ticketPriceRange, EventScheme hallScheme) {
 		this.hallId = hallId;
 		this.hallName = hallName;
 		this.eventTitle = eventTitle;
 		this.artist = artist;
 		this.date = date;
 		this.ticketPriceRange = ticketPriceRange;
-		this.categories = categories;
-		this.boughtTickets = boughtTickets;
+		this.hallScheme = hallScheme;
 	}
+	
+	public HallEventInfo(Event event, Hall hall) {
+		this.hallId =  hall.getHallId().toString();
+		this.hallName = hall.getHallName();
+		this.eventTitle = event.getTitle();
+		this.artist = event.getArtist();
+		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
+		this.ticketPriceRange = event.getPriceRange();
+		List<HallEventSeat> seats = new ArrayList<>();
+		for (EventSeat eventSeat : event.getSeats()) {
+			seats.add(new HallEventSeat(eventSeat));
+		}
+		this.hallScheme = new EventScheme(hall.getWidth(), hall.getHeight(), seats.toArray(new HallEventSeat[seats.size()]));
+	}
+	
 
 	public HallEventInfo() {
 	}
@@ -52,12 +70,10 @@ public class HallEventInfo {
 		return ticketPriceRange;
 	}
 
-	public Map<String, String[][]> getCategories() {
-		return categories;
+	public EventScheme getHallScheme() {
+		return hallScheme;
 	}
 
-	public Set<String> getBoughtTickets() {
-		return boughtTickets;
-	}
+	
 
 }

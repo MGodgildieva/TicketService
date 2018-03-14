@@ -1,5 +1,7 @@
 package telran.tickets.api.dto;
 
+import java.text.SimpleDateFormat;
+
 import telran.tickets.entities.objects.Event;
 
 public class EditEvent {
@@ -26,13 +28,13 @@ public class EditEvent {
 		this.type = type;
 		this.imageUrl = imageUrl;
 	}
-	public EditEvent(Event event) {
-		this.email = event.getOrg();
+	public EditEvent(Event event, String email) {
+		this.email = email;
 		this.eventId = event.getEventId().toString();
 		this.artist = event.getArtist();
 		this.title = event.getTitle();
 		this.city = event.getCity();
-		this.date = event.getDate();
+		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
 		this.time = event.getTime();
 		this.description = event.getDescription();
 		this.type = event.getType();

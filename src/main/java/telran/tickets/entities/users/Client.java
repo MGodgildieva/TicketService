@@ -4,14 +4,16 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import telran.tickets.api.dto.RegisterClient;
 import telran.tickets.entities.objects.Event;
-import telran.tickets.entities.objects.Ticket;
+import telran.tickets.entities.objects.EventSeat;
 
 @Entity
 public class Client implements Serializable {
@@ -19,7 +21,6 @@ public class Client implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id
 	String email;
 	String name;
 	String surname;
@@ -32,14 +33,14 @@ public class Client implements Serializable {
 	String house;
 	String postcode;
 	String additionalInfo;
+	@Id
 	String phone;
 	String additionalPhone;
 	String company;
-	@ManyToMany
+	@ManyToMany(cascade =  CascadeType.ALL)
 	Set<Event> favourite;
-	@OneToMany
-	Set<Ticket> boughtTickets;
-	
+	@OneToMany(cascade =  CascadeType.ALL, fetch = FetchType.EAGER)
+	Set<EventSeat> boughtTickets;
 	
 
 	public Client() {
@@ -140,11 +141,11 @@ public class Client implements Serializable {
 		this.favourite = favourite;
 	}
 
-	public Set<Ticket> getBoughtTickets() {
+	public Set<EventSeat> getBoughtTickets() {
 		return boughtTickets;
 	}
 
-	public void setBoughtTickets(Set<Ticket> boughtTickets) {
+	public void setBoughtTickets(Set<EventSeat> boughtTickets) {
 		this.boughtTickets = boughtTickets;
 	}
 
@@ -224,9 +225,6 @@ public class Client implements Serializable {
 		return phone;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 
 	@Override
 	public int hashCode() {
@@ -257,6 +255,16 @@ public class Client implements Serializable {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Client [email=" + email + ", name=" + name + ", surname=" + surname + ", honour=" + honour + ", type="
+				+ type + ", password=" + password + ", country=" + country + ", city=" + city + ", street=" + street
+				+ ", house=" + house + ", postcode=" + postcode + ", additionalInfo=" + additionalInfo + ", phone="
+				+ phone + ", additionalPhone=" + additionalPhone + ", company=" + company + ", favourite=" + favourite
+				+ ", boughtTickets=" + boughtTickets + "]";
+	}
+	
 
 
 }

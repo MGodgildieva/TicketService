@@ -12,7 +12,7 @@ public class BanRequest {
 	public String getEmail() {
 		return email;
 	}
-	public boolean isBanned() {
+	public boolean getIsBanned() {
 		return isBanned;
 	}
 	

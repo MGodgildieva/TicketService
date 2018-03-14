@@ -2,7 +2,7 @@ package telran.tickets.api.dto;
 
 public class AddEvent {
 
-	String org;
+	String email;
 	String artist;
 	String title;
 	String city;
@@ -13,9 +13,10 @@ public class AddEvent {
 	String imageUrl;
 	String hallId;
 	Integer allTickets;
+	EventScheme scheme;
 	public AddEvent(String org, String artist, String title, String city, String date, String time, String type,
-			String description, String imageUrl, String hallId, Integer allTickets) {
-		this.org = org;
+			String description, String imageUrl, String hallId, Integer allTickets, EventScheme scheme) {
+		this.email = org;
 		this.artist = artist;
 		this.title = title;
 		this.city = city;
@@ -26,11 +27,12 @@ public class AddEvent {
 		this.imageUrl = imageUrl;
 		this.hallId = hallId;
 		this.allTickets = allTickets;
+		this.scheme = scheme;
 	}
 	public AddEvent() {
 	}
-	public String getOrg() {
-		return org;
+	public String getEmail() {
+		return email;
 	}
 	public String getArtist() {
 		return artist;
@@ -61,6 +63,9 @@ public class AddEvent {
 	}
 	public Integer getAllTickets() {
 		return allTickets;
+	}
+	public EventScheme getScheme() {
+		return scheme;
 	}
 	
 	
