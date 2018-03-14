@@ -62,11 +62,15 @@ public class ClientRepository implements IClient {
 	public boolean buyTicket(TicketRequest request) {
 		Client client = em.find(Client.class, request.getPhone());
 		EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(request.getEventSeatId()));
+		if (eventSeat.isTaken()) {
+			return false;
+		}
 		Set<EventSeat> clientTickets = client.getBoughtTickets();
 		clientTickets.add(eventSeat);
 		client.setBoughtTickets(clientTickets);
 		em.merge(client);
 		eventSeat.setTaken(true);
+		eventSeat.setBuyer(client);
 		em.merge(eventSeat);
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
 		Integer count = event.getBoughtTickets();
@@ -182,7 +186,7 @@ public class ClientRepository implements IClient {
 	@Transactional
 	@Scheduled (cron = "*/60 * * * * *")
 	public void checkSeat() {
-		Query query = em.createQuery("SELECT e FROM EventSeat e WHERE TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
+		Query query = em.createQuery("SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
 		List<EventSeat> bookedSeats = query.getResultList();
 		for (EventSeat eventSeat : bookedSeats) {
 			eventSeat.setTaken(false);

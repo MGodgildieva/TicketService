@@ -8,10 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import telran.tickets.api.dto.HallEventSeat;
+import telran.tickets.entities.users.Client;
 
 @Entity
 public class EventSeat {
@@ -26,6 +28,8 @@ public class EventSeat {
 	private boolean isTaken;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date bookingTime;
+	@OneToOne(cascade = CascadeType.ALL)
+	private Client buyer;
 	public EventSeat() {
 	}
 	public EventSeat(Event event, Hall hall, HallEventSeat seatDto) throws Exception {
@@ -33,6 +37,7 @@ public class EventSeat {
 		this.price = seatDto.getPrice();
 		this.isTaken = seatDto.isAvailable();
 		this.bookingTime = null;
+		this.buyer =  null;
 		List<Seat> seats =  hall.getSeats();
 		for (Seat seat : seats) {
 			if (seat.getPlace().equals(seatDto.getPlace()) && seat.getRow().equals(seatDto.getRow())) {
@@ -44,9 +49,17 @@ public class EventSeat {
 		}
 		
 	}
+	
+	
 
 	
 	
+	public Client getBuyer() {
+		return buyer;
+	}
+	public void setBuyer(Client buyer) {
+		this.buyer = buyer;
+	}
 	public Event getEvent() {
 		return event;
 	}

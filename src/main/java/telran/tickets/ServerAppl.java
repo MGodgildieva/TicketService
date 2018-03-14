@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +47,7 @@ import telran.tickets.interfaces.IOrganiser;
 @SpringBootApplication
 @EnableScheduling
 @RestController
+@CrossOrigin
 public class ServerAppl {
 	@Autowired
 	IClient clientRepository;

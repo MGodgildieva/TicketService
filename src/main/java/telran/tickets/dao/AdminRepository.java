@@ -89,7 +89,7 @@ public class AdminRepository implements IAdmin {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Scheduled(cron = "0 0 12 1 * *")
+	@Scheduled(cron = "0 0 12 * * *")
 	@Override
 	@Transactional
 	@Modifying

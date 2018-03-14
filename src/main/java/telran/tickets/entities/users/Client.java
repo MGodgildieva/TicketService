@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -39,7 +38,7 @@ public class Client implements Serializable {
 	String company;
 	@ManyToMany(cascade =  CascadeType.ALL)
 	Set<Event> favourite;
-	@OneToMany(cascade =  CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade =  CascadeType.ALL, mappedBy = "buyer")
 	Set<EventSeat> boughtTickets;
 	
 
