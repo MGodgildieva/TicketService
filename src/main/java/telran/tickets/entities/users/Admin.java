@@ -16,7 +16,8 @@ public class Admin implements Serializable{
 	private String password;
 	private String type;
 	
-	
+	public Admin() {
+	}
 
 	public Admin(String email, String password) {
 		this.type = "Admin";

@@ -38,7 +38,7 @@ public interface APIConstants {
 	public static final String ADD_HALL = ADD + HALL;
 	public static final String HALL_SCHEME = "/hallscheme";
 	public static final String ADD_ORG = ADD + ORG;
-	public static final String SEE_ORGANIZERS = "/organizers";
+	public static final String SEE_ORGANIZERS = "/organisers";
 	public static final String DELETE_ORGANIZER = ORG;
 	public static final String BAN_ORG = "/ban" + ORG;
 	public static final String ADD_LICENSE = ADD + "/license";

@@ -181,18 +181,21 @@ public class ClientRepository implements IClient {
 			return false;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Transactional
-	@Scheduled (cron = "*/60 * * * * *")
+	@Scheduled(cron = "*/60 * * * * *")
 	public void checkSeat() {
-		Query query = em.createQuery("SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
-		List<EventSeat> bookedSeats = query.getResultList();
-		for (EventSeat eventSeat : bookedSeats) {
-			eventSeat.setTaken(false);
-			eventSeat.setBookingTime(null);
-			em.merge(eventSeat);
+		Query query1 = em.createQuery("SELECT e FROM EventSeat e");
+		if (!query1.getResultList().isEmpty()) {
+			Query query = em.createQuery(
+					"SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
+			List<EventSeat> bookedSeats = query.getResultList();
+			for (EventSeat eventSeat : bookedSeats) {
+				eventSeat.setTaken(false);
+				eventSeat.setBookingTime(null);
+				em.merge(eventSeat);
+			}
 		}
 	}
 }
-	
