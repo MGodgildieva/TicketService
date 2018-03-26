@@ -19,6 +19,7 @@ import telran.tickets.api.dto.FavouriteRequest;
 import telran.tickets.api.dto.RegisterClient;
 import telran.tickets.api.dto.ReservationRequest;
 import telran.tickets.api.dto.ShortEventInfo;
+import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.TicketRequest;
 import telran.tickets.entities.objects.Event;
@@ -188,8 +189,10 @@ public class ClientRepository implements IClient {
 	public void checkSeat() {
 		Query query1 = em.createQuery("SELECT e FROM EventSeat e");
 		if (!query1.getResultList().isEmpty()) {
+			//Query query = em.createQuery(
+					//"SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
 			Query query = em.createQuery(
-					"SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
+					"SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND EXTRACT(EPOCH FROM e.bookingTime) - EXTRACT(EPOCH FROM current_timestamp) >= 600");
 			List<EventSeat> bookedSeats = query.getResultList();
 			for (EventSeat eventSeat : bookedSeats) {
 				eventSeat.setTaken(false);
@@ -197,5 +200,31 @@ public class ClientRepository implements IClient {
 				em.merge(eventSeat);
 			}
 		}
+	}
+
+	@Override
+	@Transactional
+	public SuccessResponse register(ShortRegisterClient client) {
+		SuccessResponse response = new SuccessResponse();
+		Client newClient = new Client(client);
+		Client possibleClient = em.find(Client.class, client.getPhone());
+		Organiser possibleOrganiser = em.find(Organiser.class, client.getPhone());
+		if (possibleClient == null && possibleOrganiser == null) {
+			try {
+				em.persist(newClient);
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.setSuccess(false);
+				response.setResponse("Database error");
+				return response;
+			}
+		} else {
+			response.setSuccess(false);
+			response.setResponse("There is already a user with this email");
+			return response;
+		}
+		response.setSuccess(true);
+		response.setResponse(newClient.getPhone());
+		return response;
 	}
 }

@@ -34,6 +34,7 @@ import telran.tickets.api.dto.RegisterOrganiser;
 import telran.tickets.api.dto.ReservationRequest;
 import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.ShortHallInfo;
+import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.StringId;
 import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.TicketRequest;
@@ -65,6 +66,10 @@ public class ServerAppl {
 	// Client
 	@PostMapping(APIConstants.CLIENT) 
 	public SuccessResponse registerClient(@RequestBody RegisterClient request) {
+		return clientRepository.register(request);
+	}
+	@PostMapping(APIConstants.CLIENT2) 
+	public SuccessResponse registerClient(@RequestBody ShortRegisterClient request) {
 		return clientRepository.register(request);
 	}
 
@@ -220,6 +225,10 @@ public class ServerAppl {
 	@GetMapping(APIConstants.ALL_CITIES) 
 	public Iterable<String> getCities() {
 		return genRepository.getCities();
+	}
+	@GetMapping(APIConstants.TYPES) 
+	public Iterable<String> getTypes() {
+		return genRepository.getTypes();
 	}
 
 	@PostMapping(APIConstants.HALLS_BY_CITY) 

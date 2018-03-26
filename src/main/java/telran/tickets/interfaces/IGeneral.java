@@ -12,6 +12,7 @@ import telran.tickets.api.dto.TypeRequest;
 public interface IGeneral {
 	LoginResponse login(LoginRequest request);
 	Iterable<String> getCities();
+	Iterable<String> getTypes();
 	Iterable<String> getHallsByCity(String city);
 	Iterable<ShortEventInfo> getEventsByDate(String city);
 	Iterable<ShortEventInfo> getEventsByPlace(String place);

@@ -11,6 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import telran.tickets.api.dto.RegisterClient;
+import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
 
@@ -44,6 +45,27 @@ public class Client implements Serializable {
 
 	public Client() {
 	}
+	
+	public Client(ShortRegisterClient client) {
+		this.password = client.getPassword();
+		this.phone = client.getPhone();
+		this.type = "Client";
+		this.favourite = new HashSet<>();
+		this.boughtTickets = new HashSet<>();
+		this.name = null;
+		this.surname = null;
+		this.honour = null;
+		this.email = null;
+		this.country = null;
+		this.city = null;
+		this.street = null;
+		this.house = null;
+		this.postcode = null;
+		this.additionalInfo = null;
+		this.additionalPhone = null;
+		this.company = null;
+	}
+	
 
 	public Client(String name, String surname, String honour, String email, String password,
 			String country, String city, String street, String house, String postcode, String additionalInfo,

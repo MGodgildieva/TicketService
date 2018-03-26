@@ -9,6 +9,7 @@ public interface APIConstants {
 	public static final String PROFILE = "/profile";
 	
 	public static final String CLIENT = "/client";
+	public static final String CLIENT2 = "/client2";
 	public static final String LOGIN = "/login";
 	public static final String FORGOTTEN_PASSWORD = "/password";
 	public static final String EVENTS_BY_DATE= EVENTS + DATE;
@@ -43,6 +44,7 @@ public interface APIConstants {
 	public static final String BAN_ORG = "/ban" + ORG;
 	public static final String ADD_LICENSE = ADD + "/license";
 	public static final String CLEAN = "/clean";
+	public static final String TYPES = TYPE + "s";
 	
 	
 	

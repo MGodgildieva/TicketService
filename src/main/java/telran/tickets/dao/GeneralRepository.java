@@ -151,5 +151,12 @@ public class GeneralRepository implements IGeneral {
 		return new SuccessResponse(false, "Database error");
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterable<String> getTypes() {
+		Query query = em.createQuery("SELECT type FROM Event");
+		return new HashSet<>(query.getResultList());
+	}
+
 	
 }
