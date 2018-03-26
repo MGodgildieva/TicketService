@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import telran.tickets.api.dto.BuyingRequestNoReg;
+import telran.tickets.api.dto.BuyingTicketsRequestNoReg;
 import telran.tickets.api.dto.EventClientRequest;
 import telran.tickets.api.dto.FullEventInfo;
 import telran.tickets.api.dto.HallEventInfo;
@@ -27,6 +28,7 @@ public interface IGeneral {
 	HallEventInfo getFullHall(String eventId);
 	SuccessResponse forgottenPassword(String email);
 	boolean buyTicketWithoutRegistration(BuyingRequestNoReg request) throws IOException;
+	boolean buyTicketsWithoutRegistration(BuyingTicketsRequestNoReg request) throws IOException;
 	
 
 }

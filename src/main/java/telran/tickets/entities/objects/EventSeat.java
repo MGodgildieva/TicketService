@@ -42,9 +42,6 @@ public class EventSeat {
 		for (Seat seat : seats) {
 			if (seat.getPlace().equals(seatDto.getPlace()) && seat.getRow().equals(seatDto.getRow())) {
 				this.seat = seat;
-				break;
-			}else {
-				throw new Exception();
 			}
 		}
 		

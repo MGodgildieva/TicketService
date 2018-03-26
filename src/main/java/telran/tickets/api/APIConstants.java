@@ -23,7 +23,9 @@ public interface APIConstants {
 	public static final String FULL_HALL = EVENT + HALL;
 	public static final String BOOK_TICKET = "/booking";
 	public static final String BUY_TICKET = "/ticket";
+	public static final String BUY_TICKETS = BUY_TICKET + "s";
 	public static final String BUY_TICKET_NO_REG = BUY_TICKET + "/noreg";
+	public static final String BUY_TICKETS_NO_REG = BUY_TICKETS + "/noreg";
 	public static final String ADD_TO_FAVOURITE = ADD + "/favourite";
 	public static final String LANG = "/lang";
 	public static final String FAVOURITE = "/favourite";

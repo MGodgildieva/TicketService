@@ -15,18 +15,14 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import telran.tickets.dao.PdfCreator;
 
 public class EmailSender {
-	PdfCreator pdfCreator;
-	
-	
-	public EmailSender(PdfCreator pdfCreator) {
-		this.pdfCreator = pdfCreator;
+
+	public EmailSender() {
 	}
 
 
-	public void sendEmail(String to) throws IOException {
+	public void sendEmail(String to, byte[] ticket) throws IOException {
 		String from = "ticketservice2018@gmail.com";
 		String host = "smtp.gmail.com";
 	    String username = "ticketservice2018";
@@ -43,7 +39,7 @@ public class EmailSender {
 			message.setText("This message has been sent automatically.");
 			MimeBodyPart messageBodyPart = new MimeBodyPart();
 	        Multipart multipart = new MimeMultipart();
-	        DataSource source = new ByteArrayDataSource(pdfCreator.createTicketWithoutSaving(), "application/pdf");
+	        DataSource source = new ByteArrayDataSource(ticket, "application/pdf");
 	        messageBodyPart.setDataHandler(new DataHandler(source));
 	        messageBodyPart.setFileName("ticket.pdf");
 	        multipart.addBodyPart(messageBodyPart);
