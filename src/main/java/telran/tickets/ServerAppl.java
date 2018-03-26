@@ -1,5 +1,7 @@
 package telran.tickets;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +18,7 @@ import telran.tickets.api.APIConstants;
 import telran.tickets.api.dto.AddEvent;
 import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
+import telran.tickets.api.dto.BuyingRequestNoReg;
 import telran.tickets.api.dto.ClientProfile;
 import telran.tickets.api.dto.EditEvent;
 import telran.tickets.api.dto.EventClientRequest;
@@ -244,6 +247,10 @@ public class ServerAppl {
 	@PostMapping(APIConstants.FULL_HALL) 
 	public HallEventInfo getFullHall(@RequestBody StringId eventId) {
 		return genRepository.getFullHall(eventId.getId());
+	}
+	@PostMapping(APIConstants.BUY_TICKET_NO_REG) 
+	public boolean buyTicket(@RequestBody BuyingRequestNoReg request) throws IOException {
+		return genRepository.buyTicketWithoutRegistration(request);
 	}
 	
 	

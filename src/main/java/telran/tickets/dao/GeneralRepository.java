@@ -1,14 +1,17 @@
 package telran.tickets.dao;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
+import telran.tickets.api.dto.BuyingRequestNoReg;
 import telran.tickets.api.dto.EventClientRequest;
 import telran.tickets.api.dto.FullEventInfo;
 import telran.tickets.api.dto.HallEventInfo;
@@ -18,6 +21,7 @@ import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.entities.objects.Event;
+import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.Hall;
 import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Organiser;
@@ -156,6 +160,36 @@ public class GeneralRepository implements IGeneral {
 	public Iterable<String> getTypes() {
 		Query query = em.createQuery("SELECT type FROM Event");
 		return new HashSet<>(query.getResultList());
+	}
+
+	@Override
+	@Transactional
+	public boolean buyTicketWithoutRegistration(BuyingRequestNoReg request) throws IOException {
+		EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(request.getEventSeatId()));
+		if (eventSeat.isTaken()) {
+			return false;
+		}
+		eventSeat.setTaken(true);
+		try {
+			em.merge(eventSeat);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		Event event = eventSeat.getEvent();
+		Integer count = event.getBoughtTickets();
+		event.setBoughtTickets(++count);
+		try {
+			em.merge(event);
+			EmailSender sender = new EmailSender(new PdfCreator(eventSeat.getId().toString(), event.getTitle(), 
+					event.getDate().toString(), event.getTime(), event.getHall().getHallName(), 
+					eventSeat.getSeat().getRealRow(), eventSeat.getSeat().getRealPlace(), eventSeat.getPrice()));
+			sender.sendEmail(request.getEmail());
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	

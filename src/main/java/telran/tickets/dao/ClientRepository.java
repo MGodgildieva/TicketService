@@ -63,21 +63,40 @@ public class ClientRepository implements IClient {
 	public boolean buyTicket(TicketRequest request) {
 		Client client = em.find(Client.class, request.getPhone());
 		EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(request.getEventSeatId()));
-		if (eventSeat.isTaken()) {
+		if (eventSeat.isTaken() && eventSeat.getBuyer() != client) {
 			return false;
 		}
 		Set<EventSeat> clientTickets = client.getBoughtTickets();
 		clientTickets.add(eventSeat);
 		client.setBoughtTickets(clientTickets);
-		em.merge(client);
+		try {
+			em.merge(client);
+		} catch (Exception e1) {
+			return false;
+		}
 		eventSeat.setTaken(true);
 		eventSeat.setBuyer(client);
-		em.merge(eventSeat);
+		eventSeat.setBookingTime(null);
+		try {
+			em.merge(eventSeat);
+		} catch (Exception e1) {
+			return false;
+		}
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
 		Integer count = event.getBoughtTickets();
 		event.setBoughtTickets(++count);
-		em.merge(event);
-		return true;
+		try {
+			em.merge(event);
+			EmailSender sender = new EmailSender(new PdfCreator(eventSeat.getId().toString(), event.getTitle(), 
+					event.getDate().toString(), event.getTime(), event.getHall().getHallName(), 
+					eventSeat.getSeat().getRealRow(), eventSeat.getSeat().getRealPlace(), eventSeat.getPrice()));
+			if (client.getEmail() != null) {
+				sender.sendEmail(client.getEmail());
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -174,6 +193,7 @@ public class ClientRepository implements IClient {
 		EventSeat seat = em.find(EventSeat.class, Integer.parseInt(request.getSeatId()));
 		seat.setTaken(request.getIsBooked());
 		seat.setBookingTime(currentDate);
+		seat.setBuyer(em.find(Client.class, request.getPhone()));
 		try {
 			em.merge(seat);
 			return true;

@@ -19,7 +19,7 @@ import telran.tickets.entities.users.Client;
 public class EventSeat {
 	@Id
 	@GeneratedValue
-	private int id;
+	private Integer id;
 	@ManyToOne (cascade = CascadeType.ALL)
 	private Event event;
 	private String price;
@@ -84,7 +84,7 @@ public class EventSeat {
 	public void setTaken(boolean isTaken) {
 		this.isTaken = isTaken;
 	}
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	public Date getBookingTime() {
