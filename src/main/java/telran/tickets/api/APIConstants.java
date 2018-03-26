@@ -15,6 +15,8 @@ public interface APIConstants {
 	public static final String EVENTS_BY_DATE= EVENTS + DATE;
 	public static final String EVENTS_BY_HALL = EVENTS + HALL;
 	public static final String EVENTS_BY_TYPE = EVENTS + TYPE;
+	public static final String EVENTS_ON_DATE= EVENTS + "/on" + DATE;
+	public static final String EVENTS_IN_DATE_INTERVAL= EVENTS + "/in" + DATE + "s";
 	public static final String ALL_CITIES = "/cities";
 	public static final String HALLS_BY_CITY = "/halls/city";
 	public static final String EVENT = "/event";

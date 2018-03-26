@@ -1,6 +1,7 @@
 package telran.tickets.interfaces;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import telran.tickets.api.dto.BuyingRequestNoReg;
 import telran.tickets.api.dto.EventClientRequest;
@@ -20,6 +21,8 @@ public interface IGeneral {
 	Iterable<ShortEventInfo> getEventsByDate(String city);
 	Iterable<ShortEventInfo> getEventsByPlace(String place);
 	Iterable<ShortEventInfo> getEventsByType(TypeRequest typeRequest);
+	Iterable<ShortEventInfo> getEventsOnDate(String date) throws ParseException;
+	Iterable<ShortEventInfo> getEventsInDateInterval(String firstDate, String lastDate) throws ParseException;
 	FullEventInfo getEvent(EventClientRequest eventClientRequest);
 	HallEventInfo getFullHall(String eventId);
 	SuccessResponse forgottenPassword(String email);

@@ -1,6 +1,8 @@
 package telran.tickets.dao;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -190,6 +192,37 @@ public class GeneralRepository implements IGeneral {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterable<ShortEventInfo> getEventsOnDate(String date) throws ParseException {
+		Query query = em.createQuery("SELECT e FROM Event e WHERE e.date=?1 ORDER BY e.date ASC");
+		query.setParameter(1, new SimpleDateFormat("dd/MM/yyyy").parse(date));
+		Set<Event> events = new HashSet<>(query.getResultList());
+		Set<ShortEventInfo> eventInfos = new HashSet<>();
+		for (Event event : events) {
+			if(!event.getIsHidden() && !event.getIsDeleted()) {
+				eventInfos.add(new ShortEventInfo(event));
+			}
+		}
+		return eventInfos;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterable<ShortEventInfo> getEventsInDateInterval(String firstDate, String lastDate) throws ParseException {
+		Query query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?1 AND e.date<=?2 ORDER BY e.date ASC");
+		query.setParameter(1, new SimpleDateFormat("dd/MM/yyyy").parse(firstDate));
+		query.setParameter(2, new SimpleDateFormat("dd/MM/yyyy").parse(lastDate));
+		Set<Event> events = new HashSet<>(query.getResultList());
+		Set<ShortEventInfo> eventInfos = new HashSet<>();
+		for (Event event : events) {
+			if(!event.getIsHidden() && !event.getIsDeleted()) {
+				eventInfos.add(new ShortEventInfo(event));
+			}
+		}
+		return eventInfos;
 	}
 
 	

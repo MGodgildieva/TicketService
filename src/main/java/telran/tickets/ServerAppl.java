@@ -1,6 +1,7 @@
 package telran.tickets;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import telran.tickets.api.APIConstants;
@@ -213,6 +215,16 @@ public class ServerAppl {
 	@PostMapping(APIConstants.EVENTS_BY_DATE) 
 	public Iterable<ShortEventInfo> getEventsByDate(@RequestBody StringId city) {
 		return genRepository.getEventsByDate(city.getId());
+	}
+	
+	@GetMapping(APIConstants.EVENTS_ON_DATE) 
+	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam String date) throws ParseException {
+		return genRepository.getEventsOnDate(date);
+	}
+	
+	@GetMapping(APIConstants.EVENTS_IN_DATE_INTERVAL) 
+	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam String firstDate, @RequestParam String lastDate) throws ParseException {
+		return genRepository.getEventsInDateInterval(firstDate, lastDate);
 	}
 
 	@PostMapping(APIConstants.EVENTS_BY_HALL) 
