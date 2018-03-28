@@ -17,14 +17,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.property.AreaBreakType;
 
 import telran.tickets.api.dto.BuyingRequestNoReg;
 import telran.tickets.api.dto.BuyingTicketsRequestNoReg;
@@ -247,11 +241,6 @@ public class GeneralRepository implements IGeneral {
 		PdfCreator creator = new PdfCreator();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
-		Document document = new Document(pdfDoc);
-		document.setMargins(50, 50, 50, 50);
-		PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA);
-		document.setFont(font);
-		document.setFontSize(18);
 		for (String id : eventSeatIds) {
 			EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(id));
 			if (eventSeat.isTaken()) {
@@ -261,16 +250,13 @@ public class GeneralRepository implements IGeneral {
 			eventSeat.setBookingTime(null);
 			try {
 				em.merge(eventSeat);
-				creator.createPage(eventSeat, document);
-				if (pdfDoc.getNumberOfPages() != eventSeatIds.size()) {
-					document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-				}
+				creator.createTicketInRectangle(eventSeat, pdfDoc);
 			} catch (Exception e1) {
 				return false;
 			}
 			count++;
 		}
-		document.close();
+		pdfDoc.close();
 		byte [] pdfToBytes = baos.toByteArray();
 		baos.close();
 		event.setBoughtTickets(count);

@@ -18,14 +18,8 @@ import javax.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.property.AreaBreakType;
 
 import telran.tickets.api.dto.ClientProfile;
 import telran.tickets.api.dto.FavouriteRequest;
@@ -99,7 +93,7 @@ public class ClientRepository implements IClient {
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
 		Integer count = event.getBoughtTickets();
 		event.setBoughtTickets(++count);
-		PdfCreator creator =  new PdfCreator(eventSeat);
+		PdfCreator creator = new PdfCreator(eventSeat);
 		try {
 			em.merge(event);
 			EmailSender sender = new EmailSender();
@@ -222,9 +216,6 @@ public class ClientRepository implements IClient {
 	public void checkSeat() {
 		Query query1 = em.createQuery("SELECT e FROM EventSeat e");
 		if (!query1.getResultList().isEmpty()) {
-			// Query query = em.createQuery(
-			// "SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND
-			// TIMESTAMPDIFF(MINUTE, e.bookingTime, CURTIME())>=10");
 			Query query = em.createQuery(
 					"SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND EXTRACT(EPOCH FROM e.bookingTime) - EXTRACT(EPOCH FROM current_timestamp) >= 600");
 			List<EventSeat> bookedSeats = query.getResultList();
@@ -273,11 +264,6 @@ public class ClientRepository implements IClient {
 		PdfCreator creator = new PdfCreator();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
-		Document document = new Document(pdfDoc);
-		document.setMargins(50, 50, 50, 50);
-		PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA);
-		document.setFont(font);
-		document.setFontSize(18);
 		for (String id : eventSeatIds) {
 			EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(id));
 			if (eventSeat.isTaken() && eventSeat.getBuyer() != client) {
@@ -289,17 +275,14 @@ public class ClientRepository implements IClient {
 			eventSeat.setBookingTime(null);
 			try {
 				em.merge(eventSeat);
-				creator.createPage(eventSeat, document);
-				if (pdfDoc.getNumberOfPages() != eventSeatIds.size()) {
-					document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-				}
+				creator.createTicketInRectangle(eventSeat, pdfDoc);
 			} catch (Exception e1) {
 				return false;
 			}
 			count++;
 		}
-		document.close();
-		byte [] pdfToBytes = baos.toByteArray();
+		pdfDoc.close();
+		byte[] pdfToBytes = baos.toByteArray();
 		baos.close();
 		client.setBoughtTickets(clientTickets);
 		try {
