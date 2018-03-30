@@ -2,7 +2,7 @@ package telran.tickets.api.dto;
 
 public class ReservationRequest {
 	private String email;
-	private String eventSeatId;
+	private String [] eventSeatIds;
 	private boolean isBooked;
 	public ReservationRequest() {
 	}
@@ -15,11 +15,11 @@ public class ReservationRequest {
 		this.email = email;
 	}
 
-	public String getSeatId() {
-		return eventSeatId;
+	public String [] getEventSeatIds() {
+		return eventSeatIds;
 	}
-	public void setSeatId(String seatId) {
-		this.eventSeatId = seatId;
+	public void setEventSeatIds(String [] seatIds) {
+		this.eventSeatIds = seatIds;
 	}
 	public boolean getIsBooked() {
 		return isBooked;

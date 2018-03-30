@@ -3,12 +3,12 @@ package telran.tickets.api.dto;
 public class TicketsRequest {
 	private String email;
 	private String eventId;
-	private String [] eventSeatId;
+	private String [] eventSeatIds;
 	
-	public TicketsRequest(String email, String eventId, String [] eventSeatId) {
+	public TicketsRequest(String email, String eventId, String [] eventSeatIds) {
 		this.email = email;
 		this.eventId = eventId;
-		this.eventSeatId = eventSeatId;
+		this.eventSeatIds = eventSeatIds;
 	}
 	public TicketsRequest() {
 	}
@@ -20,6 +20,6 @@ public class TicketsRequest {
 		return eventId;
 	}
 	public String [] getEventSeatIds() {
-		return eventSeatId;
+		return eventSeatIds;
 	}
 }

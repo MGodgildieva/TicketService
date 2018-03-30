@@ -20,9 +20,9 @@ import telran.tickets.api.APIConstants;
 import telran.tickets.api.dto.AddEvent;
 import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
-import telran.tickets.api.dto.BuyingRequestNoReg;
-import telran.tickets.api.dto.BuyingTicketsRequestNoReg;
+import telran.tickets.api.dto.ClientBookedTicket;
 import telran.tickets.api.dto.ClientProfile;
+import telran.tickets.api.dto.ClientTicket;
 import telran.tickets.api.dto.EditEvent;
 import telran.tickets.api.dto.EventClientRequest;
 import telran.tickets.api.dto.EventOrgRequest;
@@ -43,7 +43,6 @@ import telran.tickets.api.dto.ShortHallInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.StringId;
 import telran.tickets.api.dto.SuccessResponse;
-import telran.tickets.api.dto.TicketRequest;
 import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.api.dto.VisibleRequest;
@@ -90,10 +89,6 @@ public class ServerAppl {
 		return clientRepository.bookTicket(request);
 	}
 
-	@PostMapping(APIConstants.BUY_TICKET) 
-	public boolean buyTicket(@RequestBody TicketRequest request) {
-		return clientRepository.buyTicket(request);
-	}
 	@PostMapping(APIConstants.BUY_TICKETS) 
 	public boolean buyTickets(@RequestBody TicketsRequest request) throws IOException {
 		return clientRepository.buyTickets(request);
@@ -117,6 +112,14 @@ public class ServerAppl {
 	@PutMapping(APIConstants.CHANGE_PROFILE) 
 	public ClientProfile changeProfile(@RequestBody ClientProfile request) {
 		return clientRepository.changeProfile(request);
+	}
+	@GetMapping(APIConstants.CLIENT_TICKETS)
+	public Iterable<ClientTicket> getBoughtTickets(@RequestParam String email) {
+		return clientRepository.getBoughtTickets(email);
+	}
+	@GetMapping(APIConstants.CLIENT_BOOKED_TICKETS)
+	public Iterable<ClientBookedTicket> getBookedTickets(@RequestParam String email) {
+		return clientRepository.getBookedTickets(email);
 	}
 
 	// Organiser
@@ -266,12 +269,8 @@ public class ServerAppl {
 	public HallEventInfo getFullHall(@RequestParam String eventId) {
 		return genRepository.getFullHall(eventId);
 	}
-	@PostMapping(APIConstants.BUY_TICKET_NO_REG) 
-	public boolean buyTicket(@RequestBody BuyingRequestNoReg request) throws IOException {
-		return genRepository.buyTicketWithoutRegistration(request);
-	}
 	@PostMapping(APIConstants.BUY_TICKETS_NO_REG) 
-	public boolean buyTicket(@RequestBody BuyingTicketsRequestNoReg request) throws IOException {
+	public boolean buyTicket(@RequestBody TicketsRequest request) throws IOException {
 		return genRepository.buyTicketsWithoutRegistration(request);
 	}
 	

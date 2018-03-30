@@ -50,6 +50,8 @@ public interface APIConstants {
 	public static final String ADD_LICENSE = ADD + "/license";
 	public static final String CLEAN = "/clean";
 	public static final String TYPES = TYPE + "s";
+	public static final String CLIENT_TICKETS = CLIENT + BUY_TICKETS;
+	public static final String CLIENT_BOOKED_TICKETS = CLIENT + BOOK_TICKET + BUY_TICKETS;
 	
 	
 	

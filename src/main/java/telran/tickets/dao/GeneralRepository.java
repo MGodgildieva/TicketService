@@ -20,8 +20,6 @@ import org.springframework.stereotype.Repository;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
-import telran.tickets.api.dto.BuyingRequestNoReg;
-import telran.tickets.api.dto.BuyingTicketsRequestNoReg;
 import telran.tickets.api.dto.EventClientRequest;
 import telran.tickets.api.dto.FullEventInfo;
 import telran.tickets.api.dto.HallEventInfo;
@@ -29,6 +27,7 @@ import telran.tickets.api.dto.LoginRequest;
 import telran.tickets.api.dto.LoginResponse;
 import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.SuccessResponse;
+import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
@@ -175,37 +174,6 @@ public class GeneralRepository implements IGeneral {
 		return new HashSet<>(query.getResultList());
 	}
 
-	@Override
-	@Transactional
-	public boolean buyTicketWithoutRegistration(BuyingRequestNoReg request) throws IOException {
-		EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(request.getEventSeatId()));
-		if (eventSeat.isTaken()) {
-			return false;
-		}
-		eventSeat.setTaken(true);
-		eventSeat.setBookingTime(null);
-		eventSeat.setBuyingTime(new Date());
-		try {
-			em.merge(eventSeat);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		Event event = eventSeat.getEvent();
-		Integer count = event.getBoughtTickets();
-		event.setBoughtTickets(++count);
-		PdfCreator creator =  new PdfCreator(eventSeat);
-		try {
-			em.merge(event);
-			EmailSender sender = new EmailSender();
-			sender.sendEmail(request.getEmail(), creator.createTicketWithoutSaving());
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<ShortEventInfo> getEventsOnDate(long date) throws ParseException {
@@ -239,7 +207,7 @@ public class GeneralRepository implements IGeneral {
 
 	@Override
 	@Transactional
-	public boolean buyTicketsWithoutRegistration(BuyingTicketsRequestNoReg request) throws IOException {
+	public boolean buyTicketsWithoutRegistration(TicketsRequest request) throws IOException {
 		List<String> eventSeatIds = new ArrayList<>(Arrays.asList(request.getEventSeatIds()));
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
 		Integer count = event.getBoughtTickets();

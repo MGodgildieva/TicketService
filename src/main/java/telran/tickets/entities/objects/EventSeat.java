@@ -32,6 +32,8 @@ public class EventSeat {
 	private Date buyingTime;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Client buyer;
+	@OneToOne(cascade = CascadeType.ALL)
+	private Client booker;
 	public EventSeat() {
 	}
 	public EventSeat(Event event, Hall hall, HallEventSeat seatDto) throws Exception {
@@ -41,6 +43,7 @@ public class EventSeat {
 		this.bookingTime = null;
 		this.buyingTime =  null;
 		this.buyer =  null;
+		this.booker = null;
 		List<Seat> seats =  hall.getSeats();
 		for (Seat seat : seats) {
 			if (seat.getPlace().equals(seatDto.getPlace()) && seat.getRow().equals(seatDto.getRow())) {
@@ -95,6 +98,13 @@ public class EventSeat {
 	public void setBuyingTime(Date buyingTime) {
 		this.buyingTime = buyingTime;
 	}
+	public Client getBooker() {
+		return booker;
+	}
+	public void setBooker(Client booker) {
+		this.booker = booker;
+	}
+	
 	
 	
 	

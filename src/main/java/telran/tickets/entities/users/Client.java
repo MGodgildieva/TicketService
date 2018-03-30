@@ -41,6 +41,8 @@ public class Client implements Serializable {
 	Set<Event> favourite;
 	@OneToMany(cascade =  CascadeType.ALL, mappedBy = "buyer")
 	Set<EventSeat> boughtTickets;
+	@OneToMany(cascade =  CascadeType.ALL, mappedBy = "booker")
+	Set<EventSeat> bookedTickets;
 	
 
 	public Client() {
@@ -52,6 +54,7 @@ public class Client implements Serializable {
 		this.type = "Client";
 		this.favourite = new HashSet<>();
 		this.boughtTickets = new HashSet<>();
+		this.bookedTickets = new HashSet<>();
 		this.name = null;
 		this.surname = null;
 		this.honour = null;
@@ -87,6 +90,7 @@ public class Client implements Serializable {
 		this.company = company;
 		this.favourite = new HashSet<>();
 		this.boughtTickets = new HashSet<>();
+		this.bookedTickets = new HashSet<>();
 	}
 
 	public Client(RegisterClient client) {
@@ -107,6 +111,7 @@ public class Client implements Serializable {
 		this.company = client.getCompany();
 		this.favourite = new HashSet<>();
 		this.boughtTickets = new HashSet<>();
+		this.bookedTickets = new HashSet<>();
 
 	}
 
@@ -244,6 +249,14 @@ public class Client implements Serializable {
 	
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public Set<EventSeat> getBookedTickets() {
+		return bookedTickets;
+	}
+
+	public void setBookedTickets(Set<EventSeat> bookedTickets) {
+		this.bookedTickets = bookedTickets;
 	}
 
 	@Override
