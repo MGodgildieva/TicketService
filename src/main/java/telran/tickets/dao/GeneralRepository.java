@@ -60,10 +60,11 @@ public class GeneralRepository implements IGeneral {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<ShortEventInfo> getEventsByDate(String city) {
-		Query query = em.createQuery("SELECT e FROM Event e WHERE e.city=?1 ORDER BY e.date ASC");
+		Query query = em.createQuery("SELECT e FROM Event e WHERE e.city=?1 AND e.date>=?2 ORDER BY e.date ASC");
 		query.setParameter(1, city);
-		Set<Event> events = new HashSet<>(query.getResultList());
-		Set<ShortEventInfo> eventInfos = new HashSet<>();
+		query.setParameter(2, new Date());
+		List<Event> events = new ArrayList<>(query.getResultList());
+		List<ShortEventInfo> eventInfos = new ArrayList<>();
 		for (Event event : events) {
 			if(!event.getIsHidden() && !event.getIsDeleted()) {
 				eventInfos.add(new ShortEventInfo(event));
@@ -75,10 +76,11 @@ public class GeneralRepository implements IGeneral {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<ShortEventInfo> getEventsByPlace(String hallId) {
-		Query query = em.createQuery("SELECT e FROM Event e WHERE hall_hall_id=?1 ORDER BY e.date ASC");
-		query.setParameter(1, hallId);
-		Set<Event> events = new HashSet<>(query.getResultList());
-		Set<ShortEventInfo> eventInfos = new HashSet<>();
+		Query query = em.createQuery("SELECT e FROM Event e WHERE hall_hall_id=?1 AND e.date>=?2 ORDER BY e.date ASC");
+		query.setParameter(1, Integer.parseInt(hallId));
+		query.setParameter(2, new Date());
+		List<Event> events = new ArrayList<>(query.getResultList());
+		List<ShortEventInfo> eventInfos = new ArrayList<>();
 		for (Event event : events) {
 			if(!event.getIsHidden() && !event.getIsDeleted()) {
 				eventInfos.add(new ShortEventInfo(event));
@@ -90,11 +92,12 @@ public class GeneralRepository implements IGeneral {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<ShortEventInfo> getEventsByType(TypeRequest typeRequest) {
-		Query query = em.createQuery("SELECT e FROM Event e WHERE e.type=?1 AND e.city=?2 ORDER BY e.date ASC");
+		Query query = em.createQuery("SELECT e FROM Event e WHERE e.type=?1 AND e.city=?2 AND e.date>=?3 ORDER BY e.date ASC");
 		query.setParameter(1, typeRequest.getType());
 		query.setParameter(2, typeRequest.getCity());
-		Set<Event> events = new HashSet<>(query.getResultList());
-		Set<ShortEventInfo> eventInfos = new HashSet<>();
+		query.setParameter(3, new Date());
+		List<Event> events = new ArrayList<>(query.getResultList());
+		List<ShortEventInfo> eventInfos = new ArrayList<>();
 		for (Event event : events) {
 			if(!event.getIsHidden() && !event.getIsDeleted()) {
 				eventInfos.add(new ShortEventInfo(event));
@@ -105,10 +108,10 @@ public class GeneralRepository implements IGeneral {
 
 	@Override
 	public FullEventInfo getEvent(EventClientRequest eventClientRequest) {
-		Client client = em.find(Client.class, eventClientRequest.getPhone());
+		Client client = em.find(Client.class, eventClientRequest.getEmail());
 		Event event = em.find(Event.class, Integer.parseInt(eventClientRequest.getEventId()));
 		FullEventInfo response = new FullEventInfo(event);
-		response.setPhone(eventClientRequest.getPhone());
+		response.setEmail(eventClientRequest.getEmail());
 		response.setFavourite(client.getFavourite().contains(event));
 		Integer availableTickets = event.getAllTickets() - event.getBoughtTickets();
 		response.setTicketCount(availableTickets.toString());
@@ -125,14 +128,14 @@ public class GeneralRepository implements IGeneral {
 
 	@Override
 	public LoginResponse login(LoginRequest request) {
-		Client possibleClient = em.find(Client.class, request.getId());
-		Organiser possibleOrganiser = em.find(Organiser.class, request.getId());
+		Client possibleClient = em.find(Client.class, request.getEmail());
+		Organiser possibleOrganiser = em.find(Organiser.class, request.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
 			return new LoginResponse("Wrong email");
 		}
 		if (possibleClient != null) {
 			if (possibleClient.getPassword().equals(request.getPassword())) {
-				return new LoginResponse(request.getId(), possibleClient.getType());
+				return new LoginResponse(request.getEmail(), possibleClient.getType());
 			}
 			else {
 				return new LoginResponse("Wrong password");
@@ -141,7 +144,7 @@ public class GeneralRepository implements IGeneral {
 		if (possibleOrganiser != null) {
 			if (possibleOrganiser.getPassword().equals(request.getPassword()) 
 					&& possibleOrganiser.getIsBanned() == false) {
-				return new LoginResponse(request.getId(), possibleOrganiser.getType());
+				return new LoginResponse(request.getEmail(), possibleOrganiser.getType());
 			}
 			else {
 				return new LoginResponse("Wrong password");
@@ -150,9 +153,9 @@ public class GeneralRepository implements IGeneral {
 		return new LoginResponse("Database error");
 	}
 	@Override
-	public SuccessResponse forgottenPassword(String id) {
-		Client client = em.find(Client.class, id);
-		Organiser org =  em.find(Organiser.class, id);
+	public SuccessResponse forgottenPassword(String email) {
+		Client client = em.find(Client.class, email);
+		Organiser org =  em.find(Organiser.class, email);
 		if (client == null && org == null) {
 			return new SuccessResponse(false, "There is no such user");
 		}
@@ -180,6 +183,8 @@ public class GeneralRepository implements IGeneral {
 			return false;
 		}
 		eventSeat.setTaken(true);
+		eventSeat.setBookingTime(null);
+		eventSeat.setBuyingTime(new Date());
 		try {
 			em.merge(eventSeat);
 		} catch (Exception e) {
@@ -248,6 +253,7 @@ public class GeneralRepository implements IGeneral {
 			}
 			eventSeat.setTaken(true);
 			eventSeat.setBookingTime(null);
+			eventSeat.setBuyingTime(new Date());
 			try {
 				em.merge(eventSeat);
 				creator.createTicketInRectangle(eventSeat, pdfDoc);

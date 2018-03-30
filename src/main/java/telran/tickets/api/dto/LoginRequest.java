@@ -1,17 +1,17 @@
 package telran.tickets.api.dto;
 
 public class LoginRequest {
-	private String id;
+	private String email;
 	private String password;
 	
-	public LoginRequest(String id, String password) {
-		this.id = id;
+	public LoginRequest(String email, String password) {
+		this.email = email;
 		this.password = password;
 	}
 	public LoginRequest() {
 	}
-	public String getId() {
-		return id;
+	public String getEmail() {
+		return email;
 	}
 	public String getPassword() {
 		return password;

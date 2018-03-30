@@ -21,6 +21,7 @@ public class Client implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@Id
 	String email;
 	String name;
 	String surname;
@@ -33,7 +34,6 @@ public class Client implements Serializable {
 	String house;
 	String postcode;
 	String additionalInfo;
-	@Id
 	String phone;
 	String additionalPhone;
 	String company;
@@ -48,14 +48,14 @@ public class Client implements Serializable {
 	
 	public Client(ShortRegisterClient client) {
 		this.password = client.getPassword();
-		this.phone = client.getPhone();
+		this.email = client.getEmail();
 		this.type = "Client";
 		this.favourite = new HashSet<>();
 		this.boughtTickets = new HashSet<>();
 		this.name = null;
 		this.surname = null;
 		this.honour = null;
-		this.email = null;
+		this.phone = null;
 		this.country = null;
 		this.city = null;
 		this.street = null;
@@ -182,10 +182,6 @@ public class Client implements Serializable {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -245,7 +241,10 @@ public class Client implements Serializable {
 	public String getPhone() {
 		return phone;
 	}
-
+	
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
 	@Override
 	public int hashCode() {
@@ -281,7 +280,7 @@ public class Client implements Serializable {
 	public String toString() {
 		return "Client [email=" + email + ", name=" + name + ", surname=" + surname + ", honour=" + honour + ", type="
 				+ type + ", password=" + password + ", country=" + country + ", city=" + city + ", street=" + street
-				+ ", house=" + house + ", postcode=" + postcode + ", additionalInfo=" + additionalInfo + ", phone="
+				+ ", house=" + house + ", postcode=" + postcode + ", additionalInfo=" + additionalInfo + ", email="
 				+ phone + ", additionalPhone=" + additionalPhone + ", company=" + company + ", favourite=" + favourite
 				+ ", boughtTickets=" + boughtTickets + "]";
 	}

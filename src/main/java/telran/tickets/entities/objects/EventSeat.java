@@ -28,6 +28,8 @@ public class EventSeat {
 	private boolean isTaken;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date bookingTime;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date buyingTime;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Client buyer;
 	public EventSeat() {
@@ -37,6 +39,7 @@ public class EventSeat {
 		this.price = seatDto.getPrice();
 		this.isTaken = seatDto.isAvailable();
 		this.bookingTime = null;
+		this.buyingTime =  null;
 		this.buyer =  null;
 		List<Seat> seats =  hall.getSeats();
 		for (Seat seat : seats) {
@@ -46,10 +49,6 @@ public class EventSeat {
 		}
 		
 	}
-	
-	
-
-	
 	
 	public Client getBuyer() {
 		return buyer;
@@ -90,6 +89,13 @@ public class EventSeat {
 	public void setBookingTime(Date bookingTime) {
 		this.bookingTime = bookingTime;
 	}
+	public Date getBuyingTime() {
+		return buyingTime;
+	}
+	public void setBuyingTime(Date buyingTime) {
+		this.buyingTime = buyingTime;
+	}
+	
 	
 	
 	

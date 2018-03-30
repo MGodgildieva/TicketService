@@ -46,8 +46,8 @@ public class ClientRepository implements IClient {
 	public SuccessResponse register(RegisterClient client) {
 		SuccessResponse response = new SuccessResponse();
 		Client newClient = new Client(client);
-		Client possibleClient = em.find(Client.class, client.getPhone());
-		Organiser possibleOrganiser = em.find(Organiser.class, client.getPhone());
+		Client possibleClient = em.find(Client.class, client.getEmail());
+		Organiser possibleOrganiser = em.find(Organiser.class, client.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
 			try {
 				em.persist(newClient);
@@ -62,14 +62,14 @@ public class ClientRepository implements IClient {
 			return response;
 		}
 		response.setSuccess(true);
-		response.setResponse(newClient.getPhone());
+		response.setResponse(newClient.getEmail());
 		return response;
 	}
 
 	@Override
 	@Transactional
 	public boolean buyTicket(TicketRequest request) {
-		Client client = em.find(Client.class, request.getPhone());
+		Client client = em.find(Client.class, request.getEmail());
 		EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(request.getEventSeatId()));
 		if (eventSeat.isTaken() && eventSeat.getBuyer() != client) {
 			return false;
@@ -85,6 +85,7 @@ public class ClientRepository implements IClient {
 		eventSeat.setTaken(true);
 		eventSeat.setBuyer(client);
 		eventSeat.setBookingTime(null);
+		eventSeat.setBuyingTime(new Date());
 		try {
 			em.merge(eventSeat);
 		} catch (Exception e1) {
@@ -109,7 +110,7 @@ public class ClientRepository implements IClient {
 	@Override
 	@Transactional
 	public boolean addToFavourite(FavouriteRequest favRequest) {
-		Client client = em.find(Client.class, favRequest.getPhone());
+		Client client = em.find(Client.class, favRequest.getEmail());
 		Set<Event> faves = client.getFavourite();
 		if (favRequest.getIsFavourite()) {
 			Event event = em.find(Event.class, Integer.parseInt(favRequest.getEventId()));
@@ -133,8 +134,8 @@ public class ClientRepository implements IClient {
 	}
 
 	@Override
-	public Set<ShortEventInfo> getFavourite(String clientId) {
-		Client client = em.find(Client.class, clientId);
+	public Set<ShortEventInfo> getFavourite(String email) {
+		Client client = em.find(Client.class, email);
 		Set<Event> events = client.getFavourite();
 		Set<ShortEventInfo> response = new HashSet<>();
 		for (Event event : events) {
@@ -145,8 +146,8 @@ public class ClientRepository implements IClient {
 	}
 
 	@Override
-	public ClientProfile getProfile(String phone) {
-		return new ClientProfile(em.find(Client.class, phone));
+	public ClientProfile getProfile(String email) {
+		return new ClientProfile(em.find(Client.class, email));
 	}
 
 	@Override
@@ -189,6 +190,9 @@ public class ClientRepository implements IClient {
 		if (client.getSurname() != clientWithNewInfo.getSurname()) {
 			client.setSurname(clientWithNewInfo.getSurname());
 		}
+		if (client.getPhone() != clientWithNewInfo.getPhone()) {
+			client.setPhone(clientWithNewInfo.getPhone());
+		}
 		em.merge(client);
 		return new ClientProfile(client);
 	}
@@ -200,7 +204,7 @@ public class ClientRepository implements IClient {
 		EventSeat seat = em.find(EventSeat.class, Integer.parseInt(request.getSeatId()));
 		seat.setTaken(request.getIsBooked());
 		seat.setBookingTime(currentDate);
-		seat.setBuyer(em.find(Client.class, request.getPhone()));
+		seat.setBuyer(em.find(Client.class, request.getEmail()));
 		try {
 			em.merge(seat);
 			return true;
@@ -232,13 +236,12 @@ public class ClientRepository implements IClient {
 	public SuccessResponse register(ShortRegisterClient client) {
 		SuccessResponse response = new SuccessResponse();
 		Client newClient = new Client(client);
-		Client possibleClient = em.find(Client.class, client.getPhone());
-		Organiser possibleOrganiser = em.find(Organiser.class, client.getPhone());
+		Client possibleClient = em.find(Client.class, client.getEmail());
+		Organiser possibleOrganiser = em.find(Organiser.class, client.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
 			try {
 				em.persist(newClient);
 			} catch (Exception e) {
-				e.printStackTrace();
 				response.setSuccess(false);
 				response.setResponse("Database error");
 				return response;
@@ -249,14 +252,14 @@ public class ClientRepository implements IClient {
 			return response;
 		}
 		response.setSuccess(true);
-		response.setResponse(newClient.getPhone());
+		response.setResponse(newClient.getEmail());
 		return response;
 	}
 
 	@Override
 	@Transactional
 	public boolean buyTickets(TicketsRequest request) throws IOException {
-		Client client = em.find(Client.class, request.getPhone());
+		Client client = em.find(Client.class, request.getEmail());
 		List<String> eventSeatIds = new ArrayList<>(Arrays.asList(request.getEventSeatIds()));
 		Set<EventSeat> clientTickets = client.getBoughtTickets();
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
@@ -273,6 +276,7 @@ public class ClientRepository implements IClient {
 			eventSeat.setTaken(true);
 			eventSeat.setBuyer(client);
 			eventSeat.setBookingTime(null);
+			eventSeat.setBuyingTime(new Date());
 			try {
 				em.merge(eventSeat);
 				creator.createTicketInRectangle(eventSeat, pdfDoc);

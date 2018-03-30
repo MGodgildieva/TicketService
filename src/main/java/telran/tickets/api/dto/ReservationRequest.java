@@ -1,18 +1,18 @@
 package telran.tickets.api.dto;
 
 public class ReservationRequest {
-	private String phone;
+	private String email;
 	private String eventSeatId;
 	private boolean isBooked;
 	public ReservationRequest() {
 	}
 	
-	public String getPhone() {
-		return phone;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getSeatId() {
