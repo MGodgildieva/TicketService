@@ -3,9 +3,9 @@ package telran.tickets.dao;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -203,9 +203,9 @@ public class GeneralRepository implements IGeneral {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Iterable<ShortEventInfo> getEventsOnDate(String date) throws ParseException {
+	public Iterable<ShortEventInfo> getEventsOnDate(long date) throws ParseException {
 		Query query = em.createQuery("SELECT e FROM Event e WHERE e.date=?1 ORDER BY e.date ASC");
-		query.setParameter(1, new SimpleDateFormat("dd/MM/yyyy").parse(date));
+		query.setParameter(1, new Date(date));
 		Set<Event> events = new HashSet<>(query.getResultList());
 		Set<ShortEventInfo> eventInfos = new HashSet<>();
 		for (Event event : events) {
@@ -218,10 +218,10 @@ public class GeneralRepository implements IGeneral {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Iterable<ShortEventInfo> getEventsInDateInterval(String firstDate, String lastDate) throws ParseException {
+	public Iterable<ShortEventInfo> getEventsInDateInterval(long firstDate, long lastDate) throws ParseException {
 		Query query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?1 AND e.date<=?2 ORDER BY e.date ASC");
-		query.setParameter(1, new SimpleDateFormat("dd/MM/yyyy").parse(firstDate));
-		query.setParameter(2, new SimpleDateFormat("dd/MM/yyyy").parse(lastDate));
+		query.setParameter(1, new Date(firstDate));
+		query.setParameter(2, new Date(lastDate));
 		Set<Event> events = new HashSet<>(query.getResultList());
 		Set<ShortEventInfo> eventInfos = new HashSet<>();
 		for (Event event : events) {

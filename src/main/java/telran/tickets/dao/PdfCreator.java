@@ -80,7 +80,7 @@ public class PdfCreator {
 		canvas.add(new Paragraph(dateStr + " & " + eventSeat.getEvent().getTime()).setMultipliedLeading((float) 1.2).setFirstLineIndent(10).setFont(boldFont).setUnderline());
 		canvas.add(new Paragraph(eventSeat.getEvent().getHall().getHallName()).setMultipliedLeading((float) 1).setFirstLineIndent(10).setFontSize(20).setMarginTop(15).setFont(italics));
 		canvas.add(new Paragraph(eventSeat.getEvent().getHall().getCity() + ", " + eventSeat.getEvent().getHall().getStreet() + ", " + eventSeat.getEvent().getHall().getHouse()).setMultipliedLeading((float) 1).setFirstLineIndent(10).setFontSize(20).setFont(italics));
-		canvas.add(new Paragraph("Seat: Row № " + eventSeat.getSeat().getRealRow() + ", Place № "  + eventSeat.getSeat().getRealPlace() + ", Price: #" + eventSeat.getPrice() + "$").setMultipliedLeading((float) 1.2).setFirstLineIndent(10).setFont(boldFont).setMarginTop(20).setUnderline());
+		canvas.add(new Paragraph("Seat: Row № " + eventSeat.getSeat().getRealRow() + ", Place № "  + eventSeat.getSeat().getRealPlace() + ", Price: " + eventSeat.getPrice() + "$").setMultipliedLeading((float) 1.2).setFirstLineIndent(10).setFont(boldFont).setMarginTop(20).setUnderline());
 		canvas.add(qrImage);
 		canvas.add(image);
 	    canvas.close();

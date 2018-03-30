@@ -22,8 +22,8 @@ public interface IGeneral {
 	Iterable<ShortEventInfo> getEventsByDate(String city);
 	Iterable<ShortEventInfo> getEventsByPlace(String place);
 	Iterable<ShortEventInfo> getEventsByType(TypeRequest typeRequest);
-	Iterable<ShortEventInfo> getEventsOnDate(String date) throws ParseException;
-	Iterable<ShortEventInfo> getEventsInDateInterval(String firstDate, String lastDate) throws ParseException;
+	Iterable<ShortEventInfo> getEventsOnDate(long date) throws ParseException;
+	Iterable<ShortEventInfo> getEventsInDateInterval(long firstDate, long lastDate) throws ParseException;
 	FullEventInfo getEvent(EventClientRequest eventClientRequest);
 	HallEventInfo getFullHall(String eventId);
 	SuccessResponse forgottenPassword(String email);

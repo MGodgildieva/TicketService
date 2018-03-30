@@ -80,9 +80,9 @@ public class ServerAppl {
 		return clientRepository.register(request);
 	}
 
-	@PostMapping(APIConstants.FORGOTTEN_PASSWORD) 
-	public SuccessResponse forgottenPassword(@RequestBody StringId id) {
-		return  genRepository.forgottenPassword(id.getId());
+	@GetMapping(APIConstants.FORGOTTEN_PASSWORD) 
+	public SuccessResponse forgottenPassword(@RequestParam String email) {
+		return  genRepository.forgottenPassword(email);
 	}
 	
 	@PostMapping(APIConstants.BOOK_TICKET) 
@@ -104,14 +104,14 @@ public class ServerAppl {
 		return clientRepository.addToFavourite(request);
 	}
 
-	@PostMapping(APIConstants.FAVOURITE) 
-	public Iterable<ShortEventInfo> getFavourite(@RequestBody StringId email) {
-		return clientRepository.getFavourite(email.getId());
+	@GetMapping(APIConstants.FAVOURITE) 
+	public Iterable<ShortEventInfo> getFavourite(@RequestParam String email) {
+		return clientRepository.getFavourite(email);
 	}
 
-	@PostMapping(APIConstants.CLIENT_PROFILE) 
-	public ClientProfile getProfile(@RequestBody StringId email) {
-		return clientRepository.getProfile(email.getId());
+	@GetMapping(APIConstants.CLIENT_PROFILE) 
+	public ClientProfile getProfile(@RequestParam String email) {
+		return clientRepository.getProfile(email);
 	}
 
 	@PutMapping(APIConstants.CHANGE_PROFILE) 
@@ -125,24 +125,24 @@ public class ServerAppl {
 		return orgRepository.register(request);
 	}
 
-	@PostMapping(APIConstants.ORG_EVENTS_BY_DATE) 
-	public Iterable<ShortEventInfo> orgEventsByDate(@RequestBody StringId email) {
-		return orgRepository.getEventsByDate(email.getId());
+	@GetMapping(APIConstants.ORG_EVENTS_BY_DATE) 
+	public Iterable<ShortEventInfo> orgEventsByDate(@RequestParam String email) {
+		return orgRepository.getEventsByDate(email);
 	}
 
-	@PostMapping(APIConstants.ORG_EVENTS_BY_HALL) 
-	public Iterable<ShortEventInfo> orgEventsByHall(@RequestBody OrgHallRequest request) {
-		return orgRepository.getEventsByHall(request);
+	@GetMapping(APIConstants.ORG_EVENTS_BY_HALL) 
+	public Iterable<ShortEventInfo> orgEventsByHall(@RequestParam String email, @RequestParam String hallId) {
+		return orgRepository.getEventsByHall(new OrgHallRequest(email, hallId));
 	}
 
-	@PostMapping(APIConstants.ORG_EVENTS_BY_TYPE) 
-	public Iterable<ShortEventInfo> orgEventsByType(@RequestBody OrgTypeRequest request) {
-		return orgRepository.getEventsByType(request);
+	@GetMapping(APIConstants.ORG_EVENTS_BY_TYPE) 
+	public Iterable<ShortEventInfo> orgEventsByType(@RequestParam String email, @RequestParam String type) {
+		return orgRepository.getEventsByType(new OrgTypeRequest(email, type));
 	}
 
-	@PostMapping(APIConstants.EDIT_EVENT) 
-	public EditEvent editEvent(@RequestBody EventOrgRequest request) {
-		return orgRepository.editEvent(request);
+	@GetMapping(APIConstants.EDIT_EVENT) 
+	public EditEvent editEvent(@RequestParam String email, @RequestParam String eventId) {
+		return orgRepository.editEvent(new EventOrgRequest(email, eventId));
 	}
 
 	@PostMapping(APIConstants.ADD_EVENT) 
@@ -160,14 +160,14 @@ public class ServerAppl {
 		return orgRepository.deleteEvent(eventId.getId());
 	}
 
-	@PostMapping(APIConstants.ORG_PROFILE) 
-	public RegisterOrganiser getOrganiserProfile(@RequestBody StringId email) {
-		return orgRepository.getProfile(email.getId());
+	@GetMapping(APIConstants.ORG_PROFILE) 
+	public RegisterOrganiser getOrganiserProfile(@RequestParam String email) {
+		return orgRepository.getProfile(email);
 	}
 
-	@PostMapping(APIConstants.SEE_HALLS) 
-	public Iterable<ShortHallInfo> getHalls(@RequestBody StringId email) {
-		return orgRepository.getHalls(email.getId());
+	@GetMapping(APIConstants.SEE_HALLS) 
+	public Iterable<ShortHallInfo> getHalls(@RequestParam String email) {
+		return orgRepository.getHalls(email);
 	}
 
 	@PostMapping(APIConstants.ADD_HALL) 
@@ -175,9 +175,9 @@ public class ServerAppl {
 		return orgRepository.addHall(request);
 	}
 	
-	@PostMapping(APIConstants.HALL_SCHEME) 
-	public HallScheme getHallScheme(@RequestBody StringId hallId) {
-		return orgRepository.getHallScheme(hallId.getId());
+	@GetMapping(APIConstants.HALL_SCHEME) 
+	public HallScheme getHallScheme(@RequestParam String hallId) {
+		return orgRepository.getHallScheme(hallId);
 	}
 	
 
@@ -218,29 +218,29 @@ public class ServerAppl {
 		return genRepository.login(request);
 	}
 
-	@PostMapping(APIConstants.EVENTS_BY_DATE) 
-	public Iterable<ShortEventInfo> getEventsByDate(@RequestBody StringId city) {
-		return genRepository.getEventsByDate(city.getId());
+	@GetMapping(APIConstants.EVENTS_BY_DATE) 
+	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam String city) {
+		return genRepository.getEventsByDate(city);
 	}
 	
 	@GetMapping(APIConstants.EVENTS_ON_DATE) 
-	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam String date) throws ParseException {
+	public Iterable<ShortEventInfo> getEventsOnDate(@RequestParam long date) throws ParseException {
 		return genRepository.getEventsOnDate(date);
 	}
 	
 	@GetMapping(APIConstants.EVENTS_IN_DATE_INTERVAL) 
-	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam String firstDate, @RequestParam String lastDate) throws ParseException {
+	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam long firstDate, @RequestParam long lastDate) throws ParseException {
 		return genRepository.getEventsInDateInterval(firstDate, lastDate);
 	}
 
-	@PostMapping(APIConstants.EVENTS_BY_HALL) 
-	public Iterable<ShortEventInfo> getEventsByPLace(@RequestBody StringId hallId) {
-		return genRepository.getEventsByPlace(hallId.getId());
+	@GetMapping(APIConstants.EVENTS_BY_HALL) 
+	public Iterable<ShortEventInfo> getEventsByPLace(@RequestParam String hallId) {
+		return genRepository.getEventsByPlace(hallId);
 	}
 
-	@PostMapping(APIConstants.EVENTS_BY_TYPE) 
-	public Iterable<ShortEventInfo> getEventsByType(@RequestBody TypeRequest request) {
-		return genRepository.getEventsByType(request);
+	@GetMapping(APIConstants.EVENTS_BY_TYPE) 
+	public Iterable<ShortEventInfo> getEventsByType(@RequestParam String type, @RequestParam String city) {
+		return genRepository.getEventsByType(new TypeRequest(city, type));
 	}
 
 	@GetMapping(APIConstants.ALL_CITIES) 
@@ -252,19 +252,19 @@ public class ServerAppl {
 		return genRepository.getTypes();
 	}
 
-	@PostMapping(APIConstants.HALLS_BY_CITY) 
-	public Iterable<String> getHallsByCity(@RequestBody StringId city) {
-		return genRepository.getHallsByCity(city.getId());
+	@GetMapping(APIConstants.HALLS_BY_CITY) 
+	public Iterable<String> getHallsByCity(@RequestParam String city) {
+		return genRepository.getHallsByCity(city);
 	}
 
-	@PostMapping(APIConstants.EVENT) 
-	public FullEventInfo getEvent(@RequestBody EventClientRequest request) {
-		return genRepository.getEvent(request);
+	@GetMapping(APIConstants.EVENT) 
+	public FullEventInfo getEvent(@RequestParam String eventId, @RequestParam String email) {
+		return genRepository.getEvent(new EventClientRequest(eventId, email));
 	}
 
-	@PostMapping(APIConstants.FULL_HALL) 
-	public HallEventInfo getFullHall(@RequestBody StringId eventId) {
-		return genRepository.getFullHall(eventId.getId());
+	@GetMapping(APIConstants.FULL_HALL) 
+	public HallEventInfo getFullHall(@RequestParam String eventId) {
+		return genRepository.getFullHall(eventId);
 	}
 	@PostMapping(APIConstants.BUY_TICKET_NO_REG) 
 	public boolean buyTicket(@RequestBody BuyingRequestNoReg request) throws IOException {
