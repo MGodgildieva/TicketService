@@ -78,6 +78,10 @@ public class ServerAppl {
 	public SuccessResponse registerClient(@RequestBody ShortRegisterClient request) {
 		return clientRepository.register(request);
 	}
+	@GetMapping(APIConstants.CONFIRMATION)
+	public SuccessResponse checkConfirmation (@RequestParam String code) throws IOException {
+		return clientRepository.checkConfirmation(code);
+	}
 
 	@GetMapping(APIConstants.FORGOTTEN_PASSWORD) 
 	public SuccessResponse forgottenPassword(@RequestParam String email) {

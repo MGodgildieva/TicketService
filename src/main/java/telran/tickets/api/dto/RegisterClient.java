@@ -35,6 +35,22 @@ public class RegisterClient {
 	}
 	public RegisterClient() {
 	}
+	public RegisterClient(ShortRegisterClient client) {
+		this.email = client.getEmail();
+		this.password = client.getPassword();
+		this.country = null;
+		this.city = null;
+		this.street = null;
+		this.house = null;
+		this.postcode = null;
+		this.additionalInfo = null;
+		this.phone = null;
+		this.name = null;
+		this.surname = null;
+		this.honour = null;
+		this.additionalPhone = null;
+		this.company = null;
+	}
 	public String getEmail() {
 		return email;
 	}

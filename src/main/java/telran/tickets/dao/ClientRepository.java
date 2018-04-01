@@ -15,9 +15,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
@@ -34,6 +36,7 @@ import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.users.Client;
+import telran.tickets.entities.users.Confirmation;
 import telran.tickets.entities.users.Organiser;
 import telran.tickets.interfaces.IClient;
 
@@ -46,12 +49,18 @@ public class ClientRepository implements IClient {
 	@Transactional
 	public SuccessResponse register(RegisterClient client) {
 		SuccessResponse response = new SuccessResponse();
-		Client newClient = new Client(client);
 		Client possibleClient = em.find(Client.class, client.getEmail());
 		Organiser possibleOrganiser = em.find(Organiser.class, client.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
 			try {
-				em.persist(newClient);
+				ObjectMapper mapper = new ObjectMapper();
+				String jsonInString = mapper.writeValueAsString(client);
+				String code = RandomStringUtils.randomAlphanumeric(10);
+				Confirmation conf =  new Confirmation(code, jsonInString);
+				String text = "Your confirmation code: " + code;
+				EmailSender sender =  new EmailSender(client.getEmail());
+				sender.sendEmailWithText(text);
+				em.persist(conf);
 			} catch (Exception e) {
 				response.setSuccess(false);
 				response.setResponse("Database error");
@@ -63,7 +72,7 @@ public class ClientRepository implements IClient {
 			return response;
 		}
 		response.setSuccess(true);
-		response.setResponse(newClient.getEmail());
+		response.setResponse("A message with the confirmation code has been sent to your email");
 		return response;
 	}
 
@@ -193,7 +202,7 @@ public class ClientRepository implements IClient {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	@Scheduled(cron = "* */10 * * * *")
+	@Scheduled(cron = "*/60 * * * * *")
 	public void checkSeat() {
 		Query query1 = em.createQuery("SELECT e FROM EventSeat e");
 		if (!query1.getResultList().isEmpty()) {
@@ -213,12 +222,18 @@ public class ClientRepository implements IClient {
 	@Transactional
 	public SuccessResponse register(ShortRegisterClient client) {
 		SuccessResponse response = new SuccessResponse();
-		Client newClient = new Client(client);
 		Client possibleClient = em.find(Client.class, client.getEmail());
 		Organiser possibleOrganiser = em.find(Organiser.class, client.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
 			try {
-				em.persist(newClient);
+				ObjectMapper mapper = new ObjectMapper();
+				String jsonInString = mapper.writeValueAsString(new RegisterClient(client));
+				String code = RandomStringUtils.randomAlphanumeric(10);
+				Confirmation conf =  new Confirmation(code, jsonInString);
+				String text = "Your confirmation code: " + code;
+				EmailSender sender =  new EmailSender(client.getEmail());
+				sender.sendEmailWithText(text);
+				em.persist(conf);
 			} catch (Exception e) {
 				response.setSuccess(false);
 				response.setResponse("Database error");
@@ -230,7 +245,7 @@ public class ClientRepository implements IClient {
 			return response;
 		}
 		response.setSuccess(true);
-		response.setResponse(newClient.getEmail());
+		response.setResponse("A message with the confirmation code has been sent to your email");
 		return response;
 	}
 
@@ -276,9 +291,9 @@ public class ClientRepository implements IClient {
 		event.setBoughtTickets(count);
 		try {
 			em.merge(event);
-			EmailSender sender = new EmailSender();
+			EmailSender sender = new EmailSender(client.getEmail());
 			if (client.getEmail() != null) {
-				sender.sendEmail(client.getEmail(), pdfToBytes);
+				sender.sendEmailWithTicket(pdfToBytes);
 			}
 			return true;
 		} catch (Exception e) {
@@ -304,5 +319,27 @@ public class ClientRepository implements IClient {
 			bookedTickets.add(new ClientBookedTicket(eventSeat, email));
 		}
 		return bookedTickets;
+	}
+
+	@Override
+	@Transactional
+	public SuccessResponse checkConfirmation(String code) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		Confirmation conf =  em.find(Confirmation.class, code);
+		RegisterClient client = mapper.readValue(conf.getInfo(), RegisterClient.class);
+		try {
+			em.remove(conf);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new SuccessResponse(false, "Wrong confirmation code");
+		}
+		Client newClient =  new Client(client); 
+		try {
+			em.persist(newClient);
+			return new SuccessResponse(true, newClient.getEmail());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new SuccessResponse(false, "Database error");
+		}	
 	}
 }

@@ -10,6 +10,7 @@ public interface APIConstants {
 	
 	public static final String CLIENT = "/client";
 	public static final String CLIENT2 = "/client2";
+	public static final String CONFIRMATION = "/confirmation";
 	public static final String LOGIN = "/login";
 	public static final String FORGOTTEN_PASSWORD = "/password";
 	public static final String EVENTS_BY_DATE= EVENTS + DATE;

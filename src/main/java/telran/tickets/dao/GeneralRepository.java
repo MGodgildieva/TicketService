@@ -15,6 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -152,17 +153,38 @@ public class GeneralRepository implements IGeneral {
 		return new LoginResponse("Database error");
 	}
 	@Override
+	@Transactional
 	public SuccessResponse forgottenPassword(String email) {
 		Client client = em.find(Client.class, email);
 		Organiser org =  em.find(Organiser.class, email);
+		EmailSender sender = new EmailSender(email);
+		String text = "Your new password: ";
 		if (client == null && org == null) {
 			return new SuccessResponse(false, "There is no such user");
 		}
 		if (client!=null) {
-			return new SuccessResponse(true,client.getPassword());
+			String newPassword = RandomStringUtils.randomAlphanumeric(10);
+			client.setPassword(newPassword);
+			try {
+				em.merge(client);
+				sender.sendEmailWithText(text + newPassword);
+				return new SuccessResponse(true, "A message with new password has been sent to your email");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new SuccessResponse(false, "Database error");
+			}
 		}
 		if (org!= null) {
-			return new SuccessResponse(true,org.getPassword());
+			String newPassword = RandomStringUtils.randomAlphanumeric(10);
+			org.setPassword(newPassword);
+			try {
+				em.merge(org);
+				sender.sendEmailWithText(text + newPassword);
+				return new SuccessResponse(true, "A message with new password has been sent to your email");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new SuccessResponse(false, "Database error");
+			}
 		}
 		return new SuccessResponse(false, "Database error");
 	}
@@ -236,8 +258,8 @@ public class GeneralRepository implements IGeneral {
 		event.setBoughtTickets(count);
 		try {
 			em.merge(event);
-			EmailSender sender = new EmailSender();
-			sender.sendEmail(request.getEmail(), pdfToBytes);
+			EmailSender sender = new EmailSender(request.getEmail());
+			sender.sendEmailWithTicket(pdfToBytes);
 			return true;
 		} catch (Exception e) {
 			return false;
