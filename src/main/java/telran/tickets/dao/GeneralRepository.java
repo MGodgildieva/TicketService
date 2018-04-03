@@ -52,16 +52,26 @@ public class GeneralRepository implements IGeneral {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<String> getHallsByCity(String city) {
-		Query query = em.createQuery("SELECT h.hallId FROM Hall h WHERE h.city=?1");
-		query.setParameter(1, city);
+		Query query; 
+		if (city != "") {
+			query= em.createQuery("SELECT h.hallId FROM Hall h WHERE h.city=?1");
+			query.setParameter(1, city);
+		}else {
+			query = em.createQuery("SELECT h FROM Hall h");
+		}
 		return new HashSet<>(query.getResultList());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<ShortEventInfo> getEventsByDate(String city) {
-		Query query = em.createQuery("SELECT e FROM Event e WHERE e.city=?1 AND e.date>=?2 ORDER BY e.date ASC");
-		query.setParameter(1, city);
+		Query query;
+		if (city != "") {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.city=?1 AND e.date>=?2 ORDER BY e.date ASC");
+			query.setParameter(1, city);
+		}else {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?2 ORDER BY e.date ASC");
+		}
 		query.setParameter(2, new Date());
 		List<Event> events = new ArrayList<>(query.getResultList());
 		List<ShortEventInfo> eventInfos = new ArrayList<>();
@@ -92,10 +102,17 @@ public class GeneralRepository implements IGeneral {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<ShortEventInfo> getEventsByType(TypeRequest typeRequest) {
-		Query query = em.createQuery("SELECT e FROM Event e WHERE e.type=?1 AND e.city=?2 AND e.date>=?3 ORDER BY e.date ASC");
-		query.setParameter(1, typeRequest.getType());
-		query.setParameter(2, typeRequest.getCity());
-		query.setParameter(3, new Date());
+		Query query;
+		if (typeRequest.getCity() != "") {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.type=?1 AND e.city=?2 AND e.date>=?3 ORDER BY e.date ASC");
+			query.setParameter(1, typeRequest.getType());
+			query.setParameter(2, typeRequest.getCity());
+			query.setParameter(3, new Date());
+		}else {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.type=?1 AND e.date>=?3 ORDER BY e.date ASC");
+			query.setParameter(1, typeRequest.getType());
+			query.setParameter(3, new Date());
+		}
 		List<Event> events = new ArrayList<>(query.getResultList());
 		List<ShortEventInfo> eventInfos = new ArrayList<>();
 		for (Event event : events) {
