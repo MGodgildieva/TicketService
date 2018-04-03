@@ -108,11 +108,15 @@ public class GeneralRepository implements IGeneral {
 
 	@Override
 	public FullEventInfo getEvent(EventClientRequest eventClientRequest) {
-		Client client = em.find(Client.class, eventClientRequest.getEmail());
 		Event event = em.find(Event.class, Integer.parseInt(eventClientRequest.getEventId()));
 		FullEventInfo response = new FullEventInfo(event);
+		if (eventClientRequest.getEmail()!="") {
+			Client client = em.find(Client.class, eventClientRequest.getEmail());
+			response.setFavourite(client.getFavourite().contains(event));
+		}else {
+			response.setFavourite(false);
+		}
 		response.setEmail(eventClientRequest.getEmail());
-		response.setFavourite(client.getFavourite().contains(event));
 		Integer availableTickets = event.getAllTickets() - event.getBoughtTickets();
 		response.setTicketCount(availableTickets.toString());
 		response.setPriceRange(event.getPriceRange());
