@@ -6,6 +6,8 @@ import java.text.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import telran.tickets.api.APIConstants;
 import telran.tickets.api.dto.AddEvent;
@@ -47,6 +51,10 @@ import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.api.dto.VisibleRequest;
+import telran.tickets.errors.DatabaseError;
+import telran.tickets.errors.EmailError;
+import telran.tickets.errors.JsonError;
+import telran.tickets.errors.RegistrationError;
 import telran.tickets.interfaces.IAdmin;
 import telran.tickets.interfaces.IClient;
 import telran.tickets.interfaces.IGeneral;
@@ -71,22 +79,63 @@ public class ServerAppl {
 	}
 
 	// Client
+	@SuppressWarnings("rawtypes")
 	@PostMapping(APIConstants.CLIENT) 
-	public SuccessResponse registerClient(@RequestBody RegisterClient request) {
-		return clientRepository.register(request);
+	public ResponseEntity registerClient(@RequestBody RegisterClient request) {
+		try {
+			return ResponseEntity.ok(clientRepository.register(request));
+		}catch(EmailError e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SuccessResponse(false, e.getMessage()));
+		}catch(DatabaseError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}catch(RegistrationError e) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(new SuccessResponse(false, e.getMessage()));
+		}catch(JsonError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}
 	}
+	@SuppressWarnings("rawtypes")
 	@PostMapping(APIConstants.CLIENT2) 
-	public SuccessResponse registerClient(@RequestBody ShortRegisterClient request) {
-		return clientRepository.register(request);
+	public ResponseEntity registerClient(@RequestBody ShortRegisterClient request) {
+		try {
+			return ResponseEntity.ok(clientRepository.register(request));
+		}catch(EmailError e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SuccessResponse(false, e.getMessage()));
+		}catch(DatabaseError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}catch(RegistrationError e) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(new SuccessResponse(false, e.getMessage()));
+		}catch(JsonError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}
+		
 	}
+	@SuppressWarnings("rawtypes")
 	@GetMapping(APIConstants.CONFIRMATION)
-	public SuccessResponse checkConfirmation (@RequestParam String code) throws IOException {
-		return clientRepository.checkConfirmation(code);
+	public ResponseEntity checkConfirmation (@RequestParam String code) {
+		try {
+			return ResponseEntity.ok(clientRepository.checkConfirmation(code));
+		}catch(DatabaseError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}catch(RegistrationError e) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(new SuccessResponse(false, e.getMessage()));
+		}catch(JsonError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@GetMapping(APIConstants.FORGOTTEN_PASSWORD) 
-	public SuccessResponse forgottenPassword(@RequestParam String email) {
-		return  genRepository.forgottenPassword(email);
+	public ResponseEntity forgottenPassword(@RequestParam String email) {
+		try {
+			return ResponseEntity.ok(genRepository.forgottenPassword(email));
+		}catch(EmailError e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SuccessResponse(false, e.getMessage()));
+		}catch(DatabaseError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse(false, e.getMessage()));
+		}catch(RegistrationError e) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(new SuccessResponse(false, e.getMessage()));
+		}
 	}
 	
 	@PostMapping(APIConstants.BOOK_TICKET) 
@@ -221,9 +270,16 @@ public class ServerAppl {
 	
 	//General
 
+	@SuppressWarnings("rawtypes")
 	@PostMapping(APIConstants.LOGIN) 
-	public LoginResponse login(@RequestBody LoginRequest request) {
-		return genRepository.login(request);
+	public ResponseEntity login(@RequestBody LoginRequest request) {
+		try {
+			return ResponseEntity.ok(genRepository.login(request));
+		} catch (DatabaseError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse(e.getMessage()));
+		}catch (RegistrationError e) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(new LoginResponse(e.getMessage()));
+		}
 	}
 
 	@GetMapping(APIConstants.EVENTS_BY_DATE) 

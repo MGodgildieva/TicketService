@@ -17,7 +17,7 @@ import telran.tickets.api.dto.TicketsRequest;
 public interface IClient {
 	SuccessResponse register (RegisterClient client);
 	SuccessResponse register (ShortRegisterClient client);
-	SuccessResponse checkConfirmation (String code) throws IOException;
+	SuccessResponse checkConfirmation (String code);
 	boolean bookTicket (ReservationRequest request);
 	boolean buyTickets(TicketsRequest request) throws IOException;
 	boolean addToFavourite (FavouriteRequest favRequest);

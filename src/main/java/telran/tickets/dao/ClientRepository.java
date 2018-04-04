@@ -19,6 +19,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -38,6 +41,9 @@ import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Confirmation;
 import telran.tickets.entities.users.Organiser;
+import telran.tickets.errors.DatabaseError;
+import telran.tickets.errors.JsonError;
+import telran.tickets.errors.RegistrationError;
 import telran.tickets.interfaces.IClient;
 
 @Repository
@@ -52,24 +58,25 @@ public class ClientRepository implements IClient {
 		Client possibleClient = em.find(Client.class, client.getEmail());
 		Organiser possibleOrganiser = em.find(Organiser.class, client.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonInString;
 			try {
-				ObjectMapper mapper = new ObjectMapper();
-				String jsonInString = mapper.writeValueAsString(client);
-				String code = RandomStringUtils.randomAlphanumeric(10);
-				Confirmation conf =  new Confirmation(code, jsonInString);
-				String text = "Your confirmation code: " + code;
-				EmailSender sender =  new EmailSender(client.getEmail());
-				sender.sendEmailWithText(text);
+				jsonInString = mapper.writeValueAsString(client);
+			} catch (JsonProcessingException e1) {
+				throw new JsonError("JSON parsing problem");
+			}
+			String code = RandomStringUtils.randomAlphanumeric(10);
+			Confirmation conf =  new Confirmation(code, jsonInString);
+			String text = "Your confirmation code: " + code;
+			EmailSender sender =  new EmailSender(client.getEmail());
+			sender.sendEmailWithText(text);
+			try {
 				em.persist(conf);
 			} catch (Exception e) {
-				response.setSuccess(false);
-				response.setResponse("Database error");
-				return response;
+				throw new DatabaseError("Database error");
 			}
 		} else {
-			response.setSuccess(false);
-			response.setResponse("There is already a user with this email");
-			return response;
+			throw new RegistrationError("There is already a user with this email");
 		}
 		response.setSuccess(true);
 		response.setResponse("A message with the confirmation code has been sent to your email");
@@ -225,24 +232,25 @@ public class ClientRepository implements IClient {
 		Client possibleClient = em.find(Client.class, client.getEmail());
 		Organiser possibleOrganiser = em.find(Organiser.class, client.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonInString;
 			try {
-				ObjectMapper mapper = new ObjectMapper();
-				String jsonInString = mapper.writeValueAsString(new RegisterClient(client));
-				String code = RandomStringUtils.randomAlphanumeric(10);
-				Confirmation conf =  new Confirmation(code, jsonInString);
-				String text = "Your confirmation code: " + code;
-				EmailSender sender =  new EmailSender(client.getEmail());
-				sender.sendEmailWithText(text);
+				jsonInString = mapper.writeValueAsString(new RegisterClient(client));
+			} catch (JsonProcessingException e1) {
+				throw new JsonError("JSON parsing problem");
+			}
+			String code = RandomStringUtils.randomAlphanumeric(10);
+			Confirmation conf =  new Confirmation(code, jsonInString);
+			String text = "Your confirmation code: " + code;
+			EmailSender sender =  new EmailSender(client.getEmail());
+			sender.sendEmailWithText(text);
+			try {
 				em.persist(conf);
 			} catch (Exception e) {
-				response.setSuccess(false);
-				response.setResponse("Database error");
-				return response;
+				throw new DatabaseError("Database Error");
 			}
 		} else {
-			response.setSuccess(false);
-			response.setResponse("There is already a user with this email");
-			return response;
+			throw new RegistrationError("There is already a user with this email");
 		}
 		response.setSuccess(true);
 		response.setResponse("A message with the confirmation code has been sent to your email");
@@ -323,23 +331,30 @@ public class ClientRepository implements IClient {
 
 	@Override
 	@Transactional
-	public SuccessResponse checkConfirmation(String code) throws IOException {
+	public SuccessResponse checkConfirmation(String code) {
 		ObjectMapper mapper = new ObjectMapper();
 		Confirmation conf =  em.find(Confirmation.class, code);
-		RegisterClient client = mapper.readValue(conf.getInfo(), RegisterClient.class);
+		RegisterClient client;
+		try {
+			client = mapper.readValue(conf.getInfo(), RegisterClient.class);
+		} catch (JsonParseException e1) {
+			throw new JsonError("JSON parsing problem");
+		} catch (JsonMappingException e1) {
+			throw new JsonError("JSON parsing problem");
+		} catch (IOException e1) {
+			throw new JsonError("JSON parsing problem");
+		}
 		try {
 			em.remove(conf);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new SuccessResponse(false, "Wrong confirmation code");
+			throw new RegistrationError("Wrong confirmation code");
 		}
 		Client newClient =  new Client(client); 
 		try {
 			em.persist(newClient);
 			return new SuccessResponse(true, newClient.getEmail());
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new SuccessResponse(false, "Database error");
+			throw new DatabaseError("Database Error");
 		}	
 	}
 }

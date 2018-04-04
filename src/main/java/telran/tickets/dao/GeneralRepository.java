@@ -35,6 +35,8 @@ import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.Hall;
 import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Organiser;
+import telran.tickets.errors.DatabaseError;
+import telran.tickets.errors.RegistrationError;
 import telran.tickets.interfaces.IGeneral;
 
 @Repository
@@ -152,14 +154,14 @@ public class GeneralRepository implements IGeneral {
 		Client possibleClient = em.find(Client.class, request.getEmail());
 		Organiser possibleOrganiser = em.find(Organiser.class, request.getEmail());
 		if (possibleClient == null && possibleOrganiser == null) {
-			return new LoginResponse("Wrong email");
+			throw new RegistrationError("Wrong email");
 		}
 		if (possibleClient != null) {
 			if (possibleClient.getPassword().equals(request.getPassword())) {
 				return new LoginResponse(request.getEmail(), possibleClient.getType());
 			}
 			else {
-				return new LoginResponse("Wrong password");
+				throw new RegistrationError("Wrong password");
 			}
 		}
 		if (possibleOrganiser != null) {
@@ -168,10 +170,10 @@ public class GeneralRepository implements IGeneral {
 				return new LoginResponse(request.getEmail(), possibleOrganiser.getType());
 			}
 			else {
-				return new LoginResponse("Wrong password");
+				throw new RegistrationError("Wrong password");
 			}
 		}
-		return new LoginResponse("Database error");
+		throw new DatabaseError("Database error");
 	}
 	@Override
 	@Transactional
@@ -181,33 +183,31 @@ public class GeneralRepository implements IGeneral {
 		EmailSender sender = new EmailSender(email);
 		String text = "Your new password: ";
 		if (client == null && org == null) {
-			return new SuccessResponse(false, "There is no such user");
+			throw new RegistrationError("There is no such user");
 		}
 		if (client!=null) {
 			String newPassword = RandomStringUtils.randomAlphanumeric(10);
 			client.setPassword(newPassword);
+			sender.sendEmailWithText(text + newPassword);
 			try {
 				em.merge(client);
-				sender.sendEmailWithText(text + newPassword);
 				return new SuccessResponse(true, "A message with new password has been sent to your email");
 			} catch (Exception e) {
-				e.printStackTrace();
-				return new SuccessResponse(false, "Database error");
+				throw new DatabaseError("Database error");
 			}
 		}
 		if (org!= null) {
 			String newPassword = RandomStringUtils.randomAlphanumeric(10);
 			org.setPassword(newPassword);
+			sender.sendEmailWithText(text + newPassword);
 			try {
 				em.merge(org);
-				sender.sendEmailWithText(text + newPassword);
 				return new SuccessResponse(true, "A message with new password has been sent to your email");
 			} catch (Exception e) {
-				e.printStackTrace();
-				return new SuccessResponse(false, "Database error");
+				throw new DatabaseError("Database error");
 			}
 		}
-		return new SuccessResponse(false, "Database error");
+		throw new DatabaseError("Database error");
 	}
 
 	@SuppressWarnings("unchecked")
