@@ -43,7 +43,7 @@ public class EmailSender {
 		} catch (AddressException e) {
 			throw new EmailError("Invalid email");
 		} catch (MessagingException e) {
-			throw new EmailError("Messaging problem");
+			throw new EmailError("Invalid email");
 		}
 		return message;
 	}
@@ -63,7 +63,7 @@ public class EmailSender {
 			message.setContent(multipart);
 			Transport.send(message, username, password);
 		} catch (MessagingException mex) {
-			throw new EmailError("Messaging problem");
+			throw new EmailError("Invalid email");
 		}
 	}
 	public void sendEmailWithText(String text) throws EmailError {
@@ -74,7 +74,7 @@ public class EmailSender {
 			message.setText(text);
 			Transport.send(message, username, password);
 		} catch (MessagingException mex) {
-			throw new EmailError("Messaging problem");
+			throw new EmailError("Invalid email");
 		}
 	}
 
