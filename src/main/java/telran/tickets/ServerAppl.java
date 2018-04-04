@@ -20,9 +20,9 @@ import telran.tickets.api.APIConstants;
 import telran.tickets.api.dto.AddEvent;
 import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
-import telran.tickets.api.dto.ClientBookedTicket;
+import telran.tickets.api.dto.BookedTickets;
+import telran.tickets.api.dto.BoughtTickets;
 import telran.tickets.api.dto.ClientProfile;
-import telran.tickets.api.dto.ClientTicket;
 import telran.tickets.api.dto.EditEvent;
 import telran.tickets.api.dto.EventClientRequest;
 import telran.tickets.api.dto.EventOrgRequest;
@@ -39,6 +39,7 @@ import telran.tickets.api.dto.RegisterClient;
 import telran.tickets.api.dto.RegisterOrganiser;
 import telran.tickets.api.dto.ReservationRequest;
 import telran.tickets.api.dto.ShortEventInfo;
+import telran.tickets.api.dto.ShortEventInfos;
 import telran.tickets.api.dto.ShortHallInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.StringId;
@@ -104,8 +105,8 @@ public class ServerAppl {
 	}
 
 	@GetMapping(APIConstants.FAVOURITE) 
-	public Iterable<ShortEventInfo> getFavourite(@RequestParam String email) {
-		return clientRepository.getFavourite(email);
+	public ShortEventInfos getFavourite(@RequestParam String email) {
+		return new ShortEventInfos(clientRepository.getFavourite(email));
 	}
 
 	@GetMapping(APIConstants.CLIENT_PROFILE) 
@@ -118,12 +119,12 @@ public class ServerAppl {
 		return clientRepository.changeProfile(request);
 	}
 	@GetMapping(APIConstants.CLIENT_TICKETS)
-	public Iterable<ClientTicket> getBoughtTickets(@RequestParam String email) {
-		return clientRepository.getBoughtTickets(email);
+	public BoughtTickets getBoughtTickets(@RequestParam String email) {
+		return new BoughtTickets(clientRepository.getBoughtTickets(email));
 	}
 	@GetMapping(APIConstants.CLIENT_BOOKED_TICKETS)
-	public Iterable<ClientBookedTicket> getBookedTickets(@RequestParam String email) {
-		return clientRepository.getBookedTickets(email);
+	public BookedTickets getBookedTickets(@RequestParam String email) {
+		return new BookedTickets(clientRepository.getBookedTickets(email));
 	}
 
 	// Organiser
@@ -226,28 +227,28 @@ public class ServerAppl {
 	}
 
 	@GetMapping(APIConstants.EVENTS_BY_DATE) 
-	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam String city) {
-		return genRepository.getEventsByDate(city);
+	public ShortEventInfos getEventsByDate(@RequestParam String city) {
+		return new ShortEventInfos(genRepository.getEventsByDate(city));
 	}
 	
 	@GetMapping(APIConstants.EVENTS_ON_DATE) 
-	public Iterable<ShortEventInfo> getEventsOnDate(@RequestParam long date) throws ParseException {
-		return genRepository.getEventsOnDate(date);
+	public ShortEventInfos getEventsOnDate(@RequestParam long date) throws ParseException {
+		return new ShortEventInfos(genRepository.getEventsOnDate(date));
 	}
 	
 	@GetMapping(APIConstants.EVENTS_IN_DATE_INTERVAL) 
-	public Iterable<ShortEventInfo> getEventsByDate(@RequestParam long firstDate, @RequestParam long lastDate) throws ParseException {
-		return genRepository.getEventsInDateInterval(firstDate, lastDate);
+	public ShortEventInfos getEventsByDate(@RequestParam long firstDate, @RequestParam long lastDate) throws ParseException {
+		return new ShortEventInfos(genRepository.getEventsInDateInterval(firstDate, lastDate));
 	}
 
 	@GetMapping(APIConstants.EVENTS_BY_HALL) 
-	public Iterable<ShortEventInfo> getEventsByPLace(@RequestParam String hallId) {
-		return genRepository.getEventsByPlace(hallId);
+	public ShortEventInfos getEventsByPLace(@RequestParam String hallId) {
+		return new ShortEventInfos(genRepository.getEventsByPlace(hallId));
 	}
 
 	@GetMapping(APIConstants.EVENTS_BY_TYPE) 
-	public Iterable<ShortEventInfo> getEventsByType(@RequestParam String type, @RequestParam String city) {
-		return genRepository.getEventsByType(new TypeRequest(city, type));
+	public ShortEventInfos getEventsByType(@RequestParam String type, @RequestParam String city) {
+		return new ShortEventInfos(genRepository.getEventsByType(new TypeRequest(city, type)));
 	}
 
 	@GetMapping(APIConstants.ALL_CITIES) 
