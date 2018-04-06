@@ -27,6 +27,7 @@ public interface IGeneral {
 	HallEventInfo getFullHall(String eventId);
 	SuccessResponse forgottenPassword(String email);
 	boolean buyTicketsWithoutRegistration(TicketsRequest request) throws IOException;
+	Iterable<ShortEventInfo> searchEvents(String text);
 	
 
 }

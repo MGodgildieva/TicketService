@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import telran.tickets.api.APIConstants;
 import telran.tickets.api.dto.AddEvent;
 import telran.tickets.api.dto.AddOrganiser;
@@ -333,6 +331,10 @@ public class ServerAppl {
 	@PostMapping(APIConstants.BUY_TICKETS_NO_REG) 
 	public boolean buyTicket(@RequestBody TicketsRequest request) throws IOException {
 		return genRepository.buyTicketsWithoutRegistration(request);
+	}
+	@GetMapping(APIConstants.SEARCH)
+	public ShortEventInfos searchEvents(@RequestParam String text) {
+		return new ShortEventInfos(genRepository.searchEvents(text));
 	}
 	
 	

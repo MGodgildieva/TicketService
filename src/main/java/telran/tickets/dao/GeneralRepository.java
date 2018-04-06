@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,6 +62,16 @@ public class GeneralRepository implements IGeneral {
 		}
 		return new HashSet<>(query.getResultList());
 	}
+	
+	private Iterable<ShortEventInfo> transformList(List<Event> events){
+		List<ShortEventInfo> eventInfos = new ArrayList<>();
+		for (Event event : events) {
+			if(!event.getIsHidden() && !event.getIsDeleted()) {
+				eventInfos.add(new ShortEventInfo(event));
+			}
+		}
+		return eventInfos;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -75,14 +84,7 @@ public class GeneralRepository implements IGeneral {
 			query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?2 ORDER BY e.date ASC");
 		}
 		query.setParameter(2, new Date());
-		List<Event> events = new ArrayList<>(query.getResultList());
-		List<ShortEventInfo> eventInfos = new ArrayList<>();
-		for (Event event : events) {
-			if(!event.getIsHidden() && !event.getIsDeleted()) {
-				eventInfos.add(new ShortEventInfo(event));
-			}
-		}
-		return eventInfos;
+		return transformList(query.getResultList());	
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,14 +93,7 @@ public class GeneralRepository implements IGeneral {
 		Query query = em.createQuery("SELECT e FROM Event e WHERE hall_hall_id=?1 AND e.date>=?2 ORDER BY e.date ASC");
 		query.setParameter(1, Integer.parseInt(hallId));
 		query.setParameter(2, new Date());
-		List<Event> events = new ArrayList<>(query.getResultList());
-		List<ShortEventInfo> eventInfos = new ArrayList<>();
-		for (Event event : events) {
-			if(!event.getIsHidden() && !event.getIsDeleted()) {
-				eventInfos.add(new ShortEventInfo(event));
-			}
-		}
-		return eventInfos;
+		return transformList(query.getResultList());	
 	}
 
 	@SuppressWarnings("unchecked")
@@ -115,14 +110,7 @@ public class GeneralRepository implements IGeneral {
 			query.setParameter(1, typeRequest.getType());
 			query.setParameter(3, new Date());
 		}
-		List<Event> events = new ArrayList<>(query.getResultList());
-		List<ShortEventInfo> eventInfos = new ArrayList<>();
-		for (Event event : events) {
-			if(!event.getIsHidden() && !event.getIsDeleted()) {
-				eventInfos.add(new ShortEventInfo(event));
-			}
-		}
-		return eventInfos;
+		return transformList(query.getResultList());	
 	}
 
 	@Override
@@ -222,14 +210,7 @@ public class GeneralRepository implements IGeneral {
 	public Iterable<ShortEventInfo> getEventsOnDate(long date) throws ParseException {
 		Query query = em.createQuery("SELECT e FROM Event e WHERE e.date=?1 ORDER BY e.date ASC");
 		query.setParameter(1, new Date(date));
-		Set<Event> events = new HashSet<>(query.getResultList());
-		Set<ShortEventInfo> eventInfos = new HashSet<>();
-		for (Event event : events) {
-			if(!event.getIsHidden() && !event.getIsDeleted()) {
-				eventInfos.add(new ShortEventInfo(event));
-			}
-		}
-		return eventInfos;
+		return transformList(query.getResultList());	
 	}
 
 	@SuppressWarnings("unchecked")
@@ -238,14 +219,7 @@ public class GeneralRepository implements IGeneral {
 		Query query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?1 AND e.date<=?2 ORDER BY e.date ASC");
 		query.setParameter(1, new Date(firstDate));
 		query.setParameter(2, new Date(lastDate));
-		Set<Event> events = new HashSet<>(query.getResultList());
-		Set<ShortEventInfo> eventInfos = new HashSet<>();
-		for (Event event : events) {
-			if(!event.getIsHidden() && !event.getIsDeleted()) {
-				eventInfos.add(new ShortEventInfo(event));
-			}
-		}
-		return eventInfos;
+		return transformList(query.getResultList());	
 	}
 
 	@Override
@@ -285,6 +259,15 @@ public class GeneralRepository implements IGeneral {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	@Override
+	public Iterable<ShortEventInfo> searchEvents(String text) {
+		Query query = em.createQuery("SELECT e FROM Event e WHERE LOWER(e.title) LIKE LOWER(?1) OR LOWER(e.artist) LIKE LOWER(?1) ORDER BY e.date ASC");
+		query.setParameter(1, "%" + text + "%");
+		return transformList(query.getResultList());
 	}
 
 	
