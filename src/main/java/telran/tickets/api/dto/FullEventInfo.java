@@ -12,12 +12,13 @@ public class FullEventInfo {
 	private String city;
 	private String date;
 	private String time;
+	private String type;
 	private String ticketCount;
 	private String description;
 	private String priceRange;
 	private String imageUrl;
 	private boolean favourite;
-	public FullEventInfo(String email, String eventId, String artist, String title, String city, String date, String time, String ticketCount,
+	public FullEventInfo(String email, String eventId, String artist, String title, String city, String date, String time, String type, String ticketCount,
 			String description, String priceRange, String imageUrl, boolean favourite) {
 		this.email = email;
 		this.eventId = eventId;
@@ -26,6 +27,7 @@ public class FullEventInfo {
 		this.city = city;
 		this.date = date;
 		this.time = time;
+		this.type = type;
 		this.ticketCount = ticketCount;
 		this.description = description;
 		this.priceRange = priceRange;
@@ -39,6 +41,7 @@ public class FullEventInfo {
 		this.city = event.getCity();
 		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
 		this.time = event.getTime();
+		this.type = event.getType();
 		this.description = event.getDescription();
 		this.imageUrl = event.getImageUrl();
 	}
@@ -93,7 +96,7 @@ public class FullEventInfo {
 	public boolean isFavourite() {
 		return favourite;
 	}
-	
-	
-
+	public String getType() {
+		return type;
+	}
 }
