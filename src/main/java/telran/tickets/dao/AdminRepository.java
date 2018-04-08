@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
@@ -74,11 +75,14 @@ public class AdminRepository implements IAdmin {
 
 	@Override
 	@Transactional
-	public boolean addLicense(String code) {
-		License license = new License(code);
+	public boolean addLicense(String email) {
+		String code = RandomStringUtils.randomAlphanumeric(10);
+		License license = new License(code, email);
 		if (!em.contains(license)) {
 			try {
 				em.persist(license);
+				EmailSender sender =  new EmailSender(email);
+				sender.sendEmailWithText("Your license: " + code);
 				return true;
 			} catch (Exception e) {
 				return false;

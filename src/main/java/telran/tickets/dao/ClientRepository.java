@@ -66,7 +66,7 @@ public class ClientRepository implements IClient {
 				throw new JsonError("JSON parsing problem");
 			}
 			String code = RandomStringUtils.randomAlphanumeric(10);
-			Confirmation conf =  new Confirmation(code, jsonInString);
+			Confirmation conf =  new Confirmation(code, jsonInString, new Date());
 			String text = "Your confirmation code: " + code;
 			EmailSender sender =  new EmailSender(client.getEmail());
 			sender.sendEmailWithText(text);
@@ -240,7 +240,7 @@ public class ClientRepository implements IClient {
 				throw new JsonError("JSON parsing problem");
 			}
 			String code = RandomStringUtils.randomAlphanumeric(10);
-			Confirmation conf =  new Confirmation(code, jsonInString);
+			Confirmation conf =  new Confirmation(code, jsonInString, new Date());
 			String text = "Your confirmation code: " + code;
 			EmailSender sender =  new EmailSender(client.getEmail());
 			sender.sendEmailWithText(text);
@@ -356,5 +356,16 @@ public class ClientRepository implements IClient {
 		} catch (Exception e) {
 			throw new DatabaseError("Database Error");
 		}	
+	}
+	
+	@Scheduled(cron = "0 */60 * * * *")
+	@Transactional
+	public void cleanConfirmation() {
+		Query query1 = em.createQuery("SELECT e FROM Confirmation e");
+		if (!query1.getResultList().isEmpty()) {
+			Query query = em.createQuery(
+					"DELETE e FROM Confirmation e WHERE EXTRACT(EPOCH FROM e.time) - EXTRACT(EPOCH FROM current_timestamp) >= 3600");
+			query.executeUpdate();
+			}
 	}
 }

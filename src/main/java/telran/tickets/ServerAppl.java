@@ -257,9 +257,9 @@ public class ServerAppl {
 	public boolean banOrganiser(@RequestBody BanRequest request) {
 		return adminRepository.banOrganiser(request);
 	}
-	@PostMapping(APIConstants.ADD_LICENSE) 
-	public boolean addLicense(@RequestBody StringId license) {
-		return adminRepository.addLicense(license.getId());
+	@GetMapping(APIConstants.ADD_LICENSE) 
+	public boolean addLicense(@RequestParam String email) {
+		return adminRepository.addLicense(email);
 	}
 	@DeleteMapping(APIConstants.CLEAN) 
 	public boolean cleanDatabase() {

@@ -8,6 +8,6 @@ public interface IAdmin {
 	Iterable<AddOrganiser> getOrganisers();
 	boolean deleteOrganiser(String email);
 	boolean banOrganiser(BanRequest banRequest);
-	boolean addLicense(String license);
+	boolean addLicense(String email);
 	boolean cleanDatabase();
 }

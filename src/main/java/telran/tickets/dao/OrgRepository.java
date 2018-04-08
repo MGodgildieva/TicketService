@@ -45,7 +45,7 @@ public class OrgRepository implements IOrganiser {
 		Client possibleClient = em.find(Client.class, organiser.getEmail());
 		Organiser possibleOrganiser = em.find(Organiser.class, organiser.getEmail());
 		License license = em.find(License.class, organiser.getLicense());
-		if (license == null) {
+		if (license == null || license.getEmail()!= organiser.getEmail()) {
 			response.setSuccess(false);
 			response.setResponse("Wrong license");
 			return response;

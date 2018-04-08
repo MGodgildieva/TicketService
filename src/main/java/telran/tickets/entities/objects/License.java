@@ -7,12 +7,14 @@ import javax.persistence.Id;
 public class License {
 	@Id
 	private String license;
+	private String email;
 	
 	public License() {
 	}
 	
-	public License(String license) {
+	public License(String license, String email) {
 		this.license = license;
+		this.email = email;
 	}
 
 
@@ -23,6 +25,15 @@ public class License {
 	public void setLicense(String license) {
 		this.license = license;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	
 	
 
