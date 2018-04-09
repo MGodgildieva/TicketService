@@ -2,6 +2,7 @@ package telran.tickets;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -344,6 +345,15 @@ public class ServerAppl {
 	public ShortEventInfos filterEvents(@RequestParam String type, @RequestParam Long date1, @RequestParam Long date2) {
 		return new ShortEventInfos(genRepository.filterEvents(type, date1, date2));
 	}
-	
+	@GetMapping("/falsehall")
+	public boolean falseHall(@RequestParam Integer width, @RequestParam Integer height) {
+		return adminRepository.falseHall(width, height);
+	}
+	@GetMapping("/falseevent")
+	public boolean falseEvent(@RequestParam String artist, @RequestParam String title, @RequestParam String city, @RequestParam Date date, @RequestParam String time, @RequestParam String type,
+			@RequestParam String description, @RequestParam String imageUrl, @RequestParam Integer hallId,
+			@RequestParam Integer allTickets, @RequestParam String priceRange) throws Exception{
+		return adminRepository.falseEvent(artist, title, city, date, time, type, description, imageUrl, hallId, allTickets, priceRange);
+	}
 
 }

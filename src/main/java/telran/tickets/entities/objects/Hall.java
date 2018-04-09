@@ -44,6 +44,18 @@ public class Hall {
 		this.events = events;
 		this.org = org;
 	}
+	public Hall(String hallName, String city, String street, String house, String description,
+			String width, String height) {
+		this.hallName = hallName;
+		this.city = city;
+		this.street = street;
+		this.house = house;
+		this.description = description;
+		this.seats = new ArrayList<>();
+		this.width = width;
+		this.height = height;
+		this.events = new ArrayList<>();
+	}
 	public Hall(HallRequest request, Organiser org) {
 		this.hallName = request.getHallName();
 		this.city = request.getCity();

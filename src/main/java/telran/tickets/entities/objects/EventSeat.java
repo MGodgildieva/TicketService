@@ -52,6 +52,17 @@ public class EventSeat {
 		}
 		
 	}
+	public EventSeat(Event event, Hall hall, Seat seat, String price) throws Exception {
+		this.event =  event;
+		this.price = price;
+		this.isTaken = false;
+		this.bookingTime = null;
+		this.buyingTime =  null;
+		this.buyer =  null;
+		this.booker = null;
+		this.seat = seat;
+		
+	}
 	
 	public Client getBuyer() {
 		return buyer;

@@ -65,6 +65,25 @@ public class Event {
 		this.allTickets =  allTickets;
 		this.priceRange =  priceRange;
 	}
+	public Event(String artist, String title, String city, Date date, String time, String type,
+			String description, String imageUrl, Hall hall,
+			 Integer allTickets, String priceRange) {
+		this.artist = artist;
+		this.title = title;
+		this.city = city;
+		this.date = date;
+		this.time = time;
+		this.type = type;
+		this.description = description;
+		this.imageUrl = imageUrl;
+		this.hall = hall;
+		this.isHidden = false;
+		this.isDeleted = false;
+		this.seats = new ArrayList<>();
+		this.boughtTickets = 0;
+		this.allTickets =  allTickets;
+		this.priceRange =  priceRange;
+	}
 	public Event(AddEvent event, Hall hall, Organiser org) throws Exception {
 		this.org = org;
 		this.artist = event.getArtist();

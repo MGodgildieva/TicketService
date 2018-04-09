@@ -1,7 +1,10 @@
 package telran.tickets.dao;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -18,7 +21,9 @@ import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
+import telran.tickets.entities.objects.Hall;
 import telran.tickets.entities.objects.License;
+import telran.tickets.entities.objects.Seat;
 import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Organiser;
 import telran.tickets.interfaces.IAdmin;
@@ -138,6 +143,48 @@ public class AdminRepository implements IAdmin {
 		try {
 			em.merge(seat);
 			em.merge(client);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	@Transactional
+	@Override
+	public boolean falseHall(Integer width, Integer height) {
+		Hall hall = new Hall("Concert Hall", "Ashkelon", "Bar Kochba", "209", "Amazing concert hall", width.toString(), height.toString());
+		List<Seat> seats =  new ArrayList<>();
+		for (Integer i = 1; i <= width; i++) {
+			for (Integer j = 1; j <= height; j++) {
+				Seat seat = new Seat(hall, j.toString(), i.toString(), j.toString(), i.toString(), "seat");
+				seats.add(seat);
+			}
+		}
+		hall.setSeats(seats);
+		try {
+			em.persist(hall);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	@Transactional
+	public boolean falseEvent(String artist, String title, String city, Date date, String time, String type,
+			String description, String imageUrl, Integer hallId, Integer allTickets, String priceRange) throws Exception {
+		Hall hall = em.find(Hall.class, hallId);
+		Event event =  new Event(artist, title, city, date, time, type, description, imageUrl, hall, allTickets, priceRange);
+		List<EventSeat> eventSeats = new ArrayList<>();
+		for (Seat seat : hall.getSeats()) {
+			Random rand = new Random();
+			String price = Integer.toString((rand.nextInt(10)+1)*100);
+			EventSeat e =  new EventSeat(event, hall, seat, price);
+			eventSeats.add(e);
+		}
+		event.setSeats(eventSeats);
+		try {
+			em.persist(event);
 			return true;
 		} catch (Exception e) {
 			return false;
