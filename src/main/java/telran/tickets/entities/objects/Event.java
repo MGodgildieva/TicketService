@@ -88,7 +88,7 @@ public class Event {
 		}
 		List<Integer> pricesToSort = new ArrayList<>(prices);
 		Collections.sort(pricesToSort);
-		this.priceRange = pricesToSort.get(0).toString() + " - " + pricesToSort.get(prices.size()-1).toString();
+		this.priceRange = pricesToSort.get(0).toString() + "$ - " + pricesToSort.get(prices.size()-1).toString() + "$";
 	}
 	public Event() {
 	}

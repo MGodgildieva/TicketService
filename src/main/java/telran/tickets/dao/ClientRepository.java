@@ -16,6 +16,7 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
@@ -360,8 +361,9 @@ public class ClientRepository implements IClient {
 		}	
 	}
 	
-	@Scheduled(cron = "0 */60 * * * *")
+	@Scheduled(cron = "*/60 * * * * *")
 	@Transactional
+	@Modifying
 	public void cleanConfirmation() {
 		Query query1 = em.createQuery("SELECT e FROM Confirmation e");
 		if (!query1.getResultList().isEmpty()) {
