@@ -17,7 +17,9 @@ import org.springframework.stereotype.Repository;
 import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
 import telran.tickets.entities.objects.Event;
+import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.License;
+import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Organiser;
 import telran.tickets.interfaces.IAdmin;
 
@@ -120,6 +122,25 @@ public class AdminRepository implements IAdmin {
 			return false;
 		}
 		
+	}
+	
+	@Transactional
+	@Override
+	public boolean deleteTicket(String ticketId) {
+		EventSeat seat = em.find(EventSeat.class, Integer.parseInt(ticketId));
+		Client client = seat.getBuyer();
+		seat.setTaken(false);
+		seat.setBuyer(null);
+		Set<EventSeat> boughtTickets = client.getBoughtTickets();
+		boughtTickets.remove(seat);
+		client.setBoughtTickets(boughtTickets);
+		try {
+			em.merge(seat);
+			em.merge(client);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

@@ -44,7 +44,6 @@ import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.ShortEventInfos;
 import telran.tickets.api.dto.ShortHallInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
-import telran.tickets.api.dto.StringId;
 import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.api.dto.TypeRequest;
@@ -211,8 +210,8 @@ public class ServerAppl {
 	}
 
 	@DeleteMapping(APIConstants.EVENT) 
-	public boolean deleteEvent(@RequestBody StringId eventId) {
-		return orgRepository.deleteEvent(eventId.getId());
+	public boolean deleteEvent(@RequestParam String eventId) {
+		return orgRepository.deleteEvent(eventId);
 	}
 
 	@GetMapping(APIConstants.ORG_PROFILE) 
@@ -249,8 +248,8 @@ public class ServerAppl {
 	}
 
 	@DeleteMapping(APIConstants.DELETE_ORGANIZER) 
-	public boolean deleteOrganiser(@RequestBody StringId email) {
-		return adminRepository.deleteOrganiser(email.getId());
+	public boolean deleteOrganiser(@RequestParam String email) {
+		return adminRepository.deleteOrganiser(email);
 	}
 
 	@PostMapping(APIConstants.BAN_ORG) 
@@ -264,6 +263,10 @@ public class ServerAppl {
 	@DeleteMapping(APIConstants.CLEAN) 
 	public boolean cleanDatabase() {
 		return adminRepository.cleanDatabase();
+	}
+	@DeleteMapping(APIConstants.BUY_TICKET)
+	public boolean deleteTicket(@RequestParam String ticketId) {
+		return adminRepository.deleteTicket(ticketId);
 	}
 	
 	//General

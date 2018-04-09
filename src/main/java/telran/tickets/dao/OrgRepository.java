@@ -28,6 +28,7 @@ import telran.tickets.api.dto.ShortHallInfo;
 import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.VisibleRequest;
 import telran.tickets.entities.objects.Event;
+import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.Hall;
 import telran.tickets.entities.objects.License;
 import telran.tickets.entities.users.Client;
@@ -172,8 +173,19 @@ public class OrgRepository implements IOrganiser {
 	public boolean deleteEvent(String eventId) {
 		Event event = em.find(Event.class, Integer.parseInt(eventId));
 		event.setIsDeleted(true);
-		em.merge(event);
-		return true;
+		try {
+			em.merge(event);
+			String text = "We regret to announce that the event " + event.getTitle() + " has been cancelled. Please contact the organiser " + event.getOrg().getCompanyName() + " for refund.";
+			for (EventSeat eventSeat : event.getSeats()) {
+				if (eventSeat.getBuyer()!= null) {
+					EmailSender sender = new EmailSender(eventSeat.getBuyer().getEmail());
+					sender.sendEmailWithText(text);
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override

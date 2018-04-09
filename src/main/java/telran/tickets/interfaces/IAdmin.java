@@ -10,4 +10,5 @@ public interface IAdmin {
 	boolean banOrganiser(BanRequest banRequest);
 	boolean addLicense(String email);
 	boolean cleanDatabase();
+	boolean deleteTicket(String ticketId);
 }

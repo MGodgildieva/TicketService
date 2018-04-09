@@ -368,7 +368,7 @@ public class ClientRepository implements IClient {
 		Query query1 = em.createQuery("SELECT e FROM Confirmation e");
 		if (!query1.getResultList().isEmpty()) {
 			Query query = em.createQuery(
-					"DELETE FROM Confirmation e WHERE EXTRACT(EPOCH FROM e.time) - EXTRACT(EPOCH FROM current_timestamp) >= 60");
+					"DELETE FROM Confirmation e WHERE EXTRACT(EPOCH FROM e.time) - EXTRACT(EPOCH FROM current_timestamp) >= 3600");
 			query.executeUpdate();
 			}
 	}
