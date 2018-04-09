@@ -9,7 +9,7 @@ public class HallEventSeat {
 	private String realRow;
 	private String realPlace;
 	private String type;
-	private boolean isAvailable;
+	private boolean isTaken;
 	
 	public HallEventSeat() {
 	}
@@ -20,10 +20,11 @@ public class HallEventSeat {
 		this.realPlace = seat.getSeat().getRealPlace();
 		this.realRow = seat.getSeat().getRealRow();
 		this.type = seat.getSeat().getType();
+		this.isTaken = seat.getIsTaken();
 	}
 
-	public void setAvailable(boolean isAvailable) {
-		this.isAvailable = isAvailable;
+	public void setTaken(boolean isTaken) {
+		this.isTaken = isTaken;
 	}
 	public String getPlace() {
 		return place;
@@ -61,8 +62,8 @@ public class HallEventSeat {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public boolean isAvailable() {
-		return isAvailable;
+	public boolean getIsTaken() {
+		return isTaken;
 	}
 	
 }

@@ -274,7 +274,7 @@ public class ClientRepository implements IClient {
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
 		for (String id : eventSeatIds) {
 			EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(id));
-			if (eventSeat.isTaken() && eventSeat.getBooker() != client) {
+			if (eventSeat.getIsTaken() && eventSeat.getBooker() != client) {
 				return false;
 			}
 			clientTickets.add(eventSeat);

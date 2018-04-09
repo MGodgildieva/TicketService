@@ -39,7 +39,7 @@ public class EventSeat {
 	public EventSeat(Event event, Hall hall, HallEventSeat seatDto) throws Exception {
 		this.event =  event;
 		this.price = seatDto.getPrice();
-		this.isTaken = seatDto.isAvailable();
+		this.isTaken = seatDto.getIsTaken();
 		this.bookingTime = null;
 		this.buyingTime =  null;
 		this.buyer =  null;
@@ -77,7 +77,7 @@ public class EventSeat {
 	public void setSeat(Seat seat) {
 		this.seat = seat;
 	}
-	public boolean isTaken() {
+	public boolean getIsTaken() {
 		return isTaken;
 	}
 	public void setTaken(boolean isTaken) {

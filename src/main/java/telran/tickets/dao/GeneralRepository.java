@@ -233,7 +233,7 @@ public class GeneralRepository implements IGeneral {
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
 		for (String id : eventSeatIds) {
 			EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(id));
-			if (eventSeat.isTaken()) {
+			if (eventSeat.getIsTaken()) {
 				return false;
 			}
 			eventSeat.setTaken(true);
