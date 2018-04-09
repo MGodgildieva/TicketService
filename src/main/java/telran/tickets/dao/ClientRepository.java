@@ -65,7 +65,8 @@ public class ClientRepository implements IClient {
 			} catch (JsonProcessingException e1) {
 				throw new JsonError("JSON parsing problem");
 			}
-			String code = RandomStringUtils.randomAlphanumeric(10);
+			//String code = RandomStringUtils.randomAlphanumeric(10);
+			String code = RandomStringUtils.randomNumeric(4);
 			Confirmation conf =  new Confirmation(code, jsonInString, new Date());
 			String text = "Your confirmation code: " + code;
 			EmailSender sender =  new EmailSender(client.getEmail());
@@ -239,7 +240,8 @@ public class ClientRepository implements IClient {
 			} catch (JsonProcessingException e1) {
 				throw new JsonError("JSON parsing problem");
 			}
-			String code = RandomStringUtils.randomAlphanumeric(10);
+			//String code = RandomStringUtils.randomAlphanumeric(10);
+			String code = RandomStringUtils.randomNumeric(4);
 			Confirmation conf =  new Confirmation(code, jsonInString, new Date());
 			String text = "Your confirmation code: " + code;
 			EmailSender sender =  new EmailSender(client.getEmail());
