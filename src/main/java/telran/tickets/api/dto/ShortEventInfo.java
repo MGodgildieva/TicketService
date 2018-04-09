@@ -1,6 +1,7 @@
 package telran.tickets.api.dto;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import telran.tickets.entities.objects.Event;
 
@@ -21,7 +22,7 @@ public class ShortEventInfo {
 		this.eventId = event.getEventId().toString();
 		this.title = event.getTitle();
 		this.artist = event.getArtist();
-		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
+		this.date = new SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH).format(event.getDate());
 		this.imageUrl = event.getImageUrl();
 	}
 	

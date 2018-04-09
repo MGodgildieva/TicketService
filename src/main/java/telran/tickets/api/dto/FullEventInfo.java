@@ -1,6 +1,7 @@
 package telran.tickets.api.dto;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import telran.tickets.entities.objects.Event;
 
@@ -39,7 +40,7 @@ public class FullEventInfo {
 		this.artist = event.getArtist();
 		this.title = event.getTitle();
 		this.city = event.getCity();
-		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
+		this.date = new SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH).format(event.getDate());
 		this.time = event.getTime();
 		this.type = event.getType();
 		this.description = event.getDescription();
