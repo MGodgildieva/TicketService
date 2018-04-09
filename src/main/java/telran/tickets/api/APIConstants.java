@@ -54,6 +54,7 @@ public interface APIConstants {
 	public static final String CLIENT_TICKETS = CLIENT + BUY_TICKETS;
 	public static final String CLIENT_BOOKED_TICKETS = CLIENT + BOOK_TICKET + BUY_TICKETS;
 	public static final String SEARCH = "/search";
+	public static final String FILTER = "/filter";
 	
 	
 	

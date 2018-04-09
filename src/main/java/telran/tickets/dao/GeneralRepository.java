@@ -270,5 +270,38 @@ public class GeneralRepository implements IGeneral {
 		return transformList(query.getResultList());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional
+	@Override
+	public Iterable<ShortEventInfo> filterEvents(String type, Long date1, Long date2) {
+		Query query = null;
+		if (type != "" & date1 != null & date2 != null) {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?1 AND e.date<=?2 AND e.type=?3 ORDER BY e.date ASC");
+			query.setParameter(1, new Date(date1));
+			query.setParameter(2, new Date(date2));
+			query.setParameter(3, type);
+		}
+		if (type != "" & date1 != null & date2 == null) {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.date=?1 AND e.type=?3 ORDER BY e.date ASC");
+			query.setParameter(1, new Date(date1));
+			query.setParameter(3, type);
+		}
+		if (type == "" & date1 != null & date2 != null) {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?1 AND e.date<=?2 ORDER BY e.date ASC");
+			query.setParameter(1, new Date(date1));
+			query.setParameter(2, new Date(date2));
+		}
+		if (type == "" & date1 != null & date2 == null) {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.date=?1 ORDER BY e.date ASC");
+			query.setParameter(1, new Date(date1));
+		}
+		if (type != "" & date1 == null & date2 == null) {
+			query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?4 AND e.type=?3 ORDER BY e.date ASC");
+			query.setParameter(3, type);
+			query.setParameter(4, new Date());
+		}
+		return transformList(query.getResultList());
+	}
+
 	
 }

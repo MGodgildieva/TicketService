@@ -28,6 +28,7 @@ public interface IGeneral {
 	SuccessResponse forgottenPassword(String email);
 	boolean buyTicketsWithoutRegistration(TicketsRequest request) throws IOException;
 	Iterable<ShortEventInfo> searchEvents(String text);
+	Iterable<ShortEventInfo> filterEvents(String type, Long date1, Long date2);
 	
 
 }

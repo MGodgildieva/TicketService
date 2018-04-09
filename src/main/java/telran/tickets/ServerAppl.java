@@ -340,6 +340,10 @@ public class ServerAppl {
 		return new ShortEventInfos(genRepository.searchEvents(text));
 	}
 	
+	@GetMapping(APIConstants.FILTER)
+	public ShortEventInfos filterEvents(@RequestParam String type, @RequestParam Long date1, @RequestParam Long date2) {
+		return new ShortEventInfos(genRepository.filterEvents(type, date1, date2));
+	}
 	
 
 }

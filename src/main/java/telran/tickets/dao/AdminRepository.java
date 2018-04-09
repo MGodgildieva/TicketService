@@ -131,6 +131,7 @@ public class AdminRepository implements IAdmin {
 		Client client = seat.getBuyer();
 		seat.setTaken(false);
 		seat.setBuyer(null);
+		seat.setBuyingTime(null);
 		Set<EventSeat> boughtTickets = client.getBoughtTickets();
 		boughtTickets.remove(seat);
 		client.setBoughtTickets(boughtTickets);
