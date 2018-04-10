@@ -3,9 +3,11 @@ package telran.tickets.api.dto;
 import telran.tickets.entities.objects.EventSeat;
 
 public class HallEventSeat {
+	private String id;
 	private String place;
 	private String row;
 	private String price;
+	private Integer colour;
 	private String realRow;
 	private String realPlace;
 	private String type;
@@ -14,6 +16,8 @@ public class HallEventSeat {
 	public HallEventSeat() {
 	}
 	public HallEventSeat(EventSeat seat) {
+		this.id = seat.getId().toString();
+		this.colour = seat.getColour();
 		this.place =  seat.getSeat().getPlace();
 		this.row = seat.getSeat().getRow();
 		this.price = seat.getPrice();
@@ -65,5 +69,19 @@ public class HallEventSeat {
 	public boolean getIsTaken() {
 		return isTaken;
 	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public Integer getColour() {
+		return colour;
+	}
+	public void setColour(Integer colour) {
+		this.colour = colour;
+	}
+	
+	
 	
 }

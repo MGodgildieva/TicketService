@@ -23,11 +23,13 @@ public class EventSeat {
 	private boolean isTaken;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Ticket ticket;
+	private Integer colour;
 	public EventSeat() {
 	}
 	public EventSeat(Event event, Hall hall, HallEventSeat seatDto) throws Exception {
 		this.event =  event;
 		this.price = seatDto.getPrice();
+		this.colour = seatDto.getColour();
 		this.isTaken = seatDto.getIsTaken();
 		List<Seat> seats =  hall.getSeats();
 		for (Seat seat : seats) {
@@ -37,9 +39,10 @@ public class EventSeat {
 		}
 		
 	}
-	public EventSeat(Event event, Hall hall, Seat seat, String price) throws Exception {
+	public EventSeat(Event event, Hall hall, Seat seat, String price, Integer colour) throws Exception {
 		this.event =  event;
 		this.price = price;
+		this.colour = colour;
 		this.isTaken = false;
 		this.seat = seat;
 		
@@ -77,6 +80,12 @@ public class EventSeat {
 	}
 	public void setTicket(Ticket ticket) {
 		this.ticket = ticket;
+	}
+	public Integer getColour() {
+		return colour;
+	}
+	public void setColour(Integer colour) {
+		this.colour = colour;
 	}
 	
 	

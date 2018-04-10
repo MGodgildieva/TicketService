@@ -168,8 +168,9 @@ public class AdminRepository implements IAdmin {
 		List<EventSeat> eventSeats = new ArrayList<>();
 		for (Seat seat : hall.getSeats()) {
 			Random rand = new Random();
-			String price = Integer.toString((rand.nextInt(10)+1)*100);
-			EventSeat e =  new EventSeat(event, hall, seat, price);
+			Integer colour = rand.nextInt(10)+1;
+			String price = Integer.toString(colour*100);
+			EventSeat e =  new EventSeat(event, hall, seat, price, colour);
 			eventSeats.add(e);
 		}
 		event.setSeats(eventSeats);
