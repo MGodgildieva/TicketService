@@ -177,8 +177,8 @@ public class OrgRepository implements IOrganiser {
 			em.merge(event);
 			String text = "We regret to announce that the event " + event.getTitle() + " has been cancelled. Please contact the organiser " + event.getOrg().getCompanyName() + " for refund.";
 			for (EventSeat eventSeat : event.getSeats()) {
-				if (eventSeat.getBuyer()!= null) {
-					EmailSender sender = new EmailSender(eventSeat.getBuyer().getEmail());
+				if (eventSeat.getTicket().getBuyer()!= null) {
+					EmailSender sender = new EmailSender(eventSeat.getTicket().getBuyer().getEmail());
 					sender.sendEmailWithText(text);
 				}
 			}

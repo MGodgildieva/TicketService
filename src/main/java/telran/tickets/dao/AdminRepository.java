@@ -24,7 +24,6 @@ import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.Hall;
 import telran.tickets.entities.objects.License;
 import telran.tickets.entities.objects.Seat;
-import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Organiser;
 import telran.tickets.interfaces.IAdmin;
 
@@ -105,7 +104,7 @@ public class AdminRepository implements IAdmin {
 	@Transactional
 	@Modifying
 	public boolean cleanDatabase() {
-		Query query1 = em.createQuery("SELECT e FROM Event e WHERE TIMESTAMPDIFF(DAY, e.date, CURDATE())>30");
+		Query query1 = em.createQuery("SELECT e FROM Event e WHERE EXTRACT(EPOCH FROM e.date) - EXTRACT(EPOCH FROM current_timestamp) >= (60*60*24*30)");
 		List<Event> events =  query1.getResultList();
 		if(!events.isEmpty()) {
 			Set<Integer> ids = new HashSet<>();
@@ -114,7 +113,7 @@ public class AdminRepository implements IAdmin {
 			}
 			Query query2 = em.createQuery("DELETE FROM EventSeat e WHERE event_event_id IN ?1");
 			query2.setParameter(1, ids);
-			Query query = em.createQuery("DELETE FROM Event e WHERE TIMESTAMPDIFF(DAY, e.date, CURDATE())>30");
+			Query query = em.createQuery("DELETE FROM Event e WHERE EXTRACT(EPOCH FROM e.date) - EXTRACT(EPOCH FROM current_timestamp) >= (60*60*24*30)");
 			try {
 				query.executeUpdate();
 				query2.executeUpdate();
@@ -131,18 +130,9 @@ public class AdminRepository implements IAdmin {
 	
 	@Transactional
 	@Override
-	public boolean deleteTicket(String ticketId) {
-		EventSeat seat = em.find(EventSeat.class, Integer.parseInt(ticketId));
-		Client client = seat.getBuyer();
-		seat.setTaken(false);
-		seat.setBuyer(null);
-		seat.setBuyingTime(null);
-		Set<EventSeat> boughtTickets = client.getBoughtTickets();
-		boughtTickets.remove(seat);
-		client.setBoughtTickets(boughtTickets);
+	public boolean deleteTicket(Long ticketId) {
 		try {
-			em.merge(seat);
-			em.merge(client);
+			em.remove(ticketId);
 			return true;
 		} catch (Exception e) {
 			return false;

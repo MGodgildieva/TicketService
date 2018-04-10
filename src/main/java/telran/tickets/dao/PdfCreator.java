@@ -35,6 +35,7 @@ public class PdfCreator {
 		this.eventSeat = eventSeat;
 	}
 	
+	@SuppressWarnings("resource")
 	public void createTicketInRectangle(EventSeat eventSeat, PdfDocument pdf) throws IOException {
 		float width = pdf.getDefaultPageSize().getWidth();
 	    float height = pdf.getDefaultPageSize().getHeight();
@@ -52,7 +53,8 @@ public class PdfCreator {
 	    PdfFont italics = PdfFontFactory.createFont(FontConstants.TIMES_ITALIC);
 	    Canvas canvas = new Canvas(pdfCanvas, pdf, rectangle);
 	    canvas.setFontSize(24);
-	    BarcodeQRCode qrCode = new BarcodeQRCode(eventSeat.getId().toString());
+        String code =  eventSeat.getTicket().getTicketId().toString() + "/" + eventSeat.getId().toString();
+	    BarcodeQRCode qrCode = new BarcodeQRCode(code);
 		Rectangle rect = qrCode.getBarcodeSize();
         PdfFormXObject template = new PdfFormXObject(new Rectangle(rect.getWidth(), rect.getHeight() + 10));
         PdfCanvas templateCanvas = new PdfCanvas(template, pdf);
@@ -63,7 +65,7 @@ public class PdfCreator {
         qrImage.scaleToFit(200,200);
         qrImage.setFixedPosition(400, 660);
 		Barcode128 code128 = new Barcode128(pdf);
-	    code128.setCode(eventSeat.getId().toString());
+	    code128.setCode(code);
 	    code128.setCodeType(Barcode128.CODE128);
         rect = code128.getBarcodeSize();
         template = new PdfFormXObject(new Rectangle(rect.getWidth(), rect.getHeight() + 10));

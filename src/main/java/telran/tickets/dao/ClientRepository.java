@@ -39,10 +39,12 @@ import telran.tickets.api.dto.SuccessResponse;
 import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
+import telran.tickets.entities.objects.Ticket;
 import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Confirmation;
 import telran.tickets.entities.users.Organiser;
 import telran.tickets.errors.DatabaseError;
+import telran.tickets.errors.EmailError;
 import telran.tickets.errors.JsonError;
 import telran.tickets.errors.RegistrationError;
 import telran.tickets.interfaces.IClient;
@@ -177,35 +179,42 @@ public class ClientRepository implements IClient {
 
 	@Override
 	@Transactional
-	public boolean bookTicket(ReservationRequest request) {
+	public Long bookTicket(ReservationRequest request) {
 		Date currentDate = new Date();
+		Ticket ticket = new Ticket(currentDate, null, null);
 		Client client = em.find(Client.class, request.getEmail());
-		Set<EventSeat> bookedTickets = client.getBookedTickets();
+		Integer price = 0;
+		if (client!=null) {
+			ticket.setBooker(client);
+		}else{
+			ticket.setEmail(request.getEmail());
+		}
 		for (String seatId : request.getEventSeatIds()) {
 			EventSeat seat = em.find(EventSeat.class, Integer.parseInt(seatId));
 			seat.setTaken(request.getIsBooked());
-			if (request.getIsBooked()) {
-				seat.setBookingTime(currentDate);
-				seat.setBooker(client);
-				bookedTickets.add(seat);
-			}else {
-				seat.setBookingTime(null);
-				seat.setBooker(null);
-				bookedTickets.remove(seat);
-			}
+			seat.setTicket(ticket);
+			price = price + Integer.parseInt(seat.getPrice());
 			try {
 				em.merge(seat);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				return 0l;
 			}
 		}
-		client.setBookedTickets(bookedTickets);
+		if (client!=null) {
+			try {
+				em.merge(client);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		ticket.setPrice(price);
 		try {
-			em.merge(client);
-			return true;
+			em.merge(ticket);
+			return ticket.getTicketId();
 		} catch (Exception e) {
-			return false;
+			e.printStackTrace();
+			return 0l;
 		}
 	}
 
@@ -213,17 +222,19 @@ public class ClientRepository implements IClient {
 	@Transactional
 	@Scheduled(cron = "*/60 * * * * *")
 	public void checkSeat() {
-		Query query1 = em.createQuery("SELECT e FROM EventSeat e");
+		Query query1 = em.createQuery("SELECT e FROM Ticket e");
 		if (!query1.getResultList().isEmpty()) {
 			Query query = em.createQuery(
-					"SELECT e FROM EventSeat e WHERE e.bookingTime IS NOT NULL AND EXTRACT(EPOCH FROM e.bookingTime) - EXTRACT(EPOCH FROM current_timestamp) >= 600");
-			List<EventSeat> bookedSeats = query.getResultList();
-			for (EventSeat eventSeat : bookedSeats) {
-				eventSeat.setTaken(false);
-				eventSeat.setBookingTime(null);
-				eventSeat.setBooker(null);
-				em.merge(eventSeat);
+					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
+			List<Ticket> bookedSeats = query.getResultList();
+			for (Ticket ticket : bookedSeats) {
+				for (EventSeat e : ticket.getEventSeats()) {
+					e.setTaken(false);
+					em.merge(e);
+				}
 			}
+			Query query2 = em.createQuery("DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
+			query2.executeUpdate();
 		}
 	}
 
@@ -260,35 +271,50 @@ public class ClientRepository implements IClient {
 		return response;
 	}
 
-	@Override
+	/*@Override
 	@Transactional
 	public boolean buyTickets(TicketsRequest request) throws IOException {
 		Client client = em.find(Client.class, request.getEmail());
-		System.out.println(Arrays.toString(request.getEventSeatIds()));
-		List<String> eventSeatIds = new ArrayList<>(Arrays.asList(request.getEventSeatIds()));
-		Set<EventSeat> clientTickets = client.getBoughtTickets();
+		Set<Ticket> clientTickets = client.getBoughtTickets();
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
 		Integer count = event.getBoughtTickets();
 		PdfCreator creator = new PdfCreator();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
-		for (String id : eventSeatIds) {
-			EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(id));
-			if (eventSeat.getIsTaken() && eventSeat.getBooker() != client) {
-				return false;
-			}
-			clientTickets.add(eventSeat);
-			eventSeat.setTaken(true);
-			eventSeat.setBuyer(client);
-			eventSeat.setBookingTime(null);
-			eventSeat.setBuyingTime(new Date());
+		System.out.println(Arrays.toString(request.getEventSeatIds()));
+		if (!request.getTicketId().equals(null)) {
+			Ticket ticket = em.find(Ticket.class, request.getTicketId());
+			ticket.setPaymentStarted(true);
+			ticket.setBuyer(client);
+			ticket.setBuyingTime(new Date());
+			count = count + ticket.getEventSeats().size();
 			try {
-				em.merge(eventSeat);
-				creator.createTicketInRectangle(eventSeat, pdfDoc);
-			} catch (Exception e1) {
+				em.merge(ticket);
+				for (EventSeat e : ticket.getEventSeats()) {
+					creator.createTicketInRectangle(e, pdfDoc);
+				}
+			} catch (Exception e) {
 				return false;
 			}
-			count++;
+		}else {
+			Ticket ticket = new Ticket(new Date(), true, client, null);
+			List<String> eventSeatIds = new ArrayList<>(Arrays.asList(request.getEventSeatIds()));
+			for (String id : eventSeatIds) {
+				EventSeat eventSeat = em.find(EventSeat.class, Integer.parseInt(id));
+				if (eventSeat.getIsTaken() && eventSeat.getTicket().getBooker() != client) {
+					return false;
+				}
+				eventSeat.setTicket(ticket);
+				eventSeat.setTaken(true);
+				try {
+					em.persist(ticket);
+					em.merge(eventSeat);
+					creator.createTicketInRectangle(eventSeat, pdfDoc);
+				} catch (Exception e1) {
+					return false;
+				}
+				count++;
+			}
 		}
 		pdfDoc.close();
 		byte[] pdfToBytes = baos.toByteArray();
@@ -310,14 +336,16 @@ public class ClientRepository implements IClient {
 		} catch (Exception e) {
 			return false;
 		}
-	}
+	}*/
 
 	@Override
 	public Iterable<ClientTicket> getBoughtTickets(String email) {
 		Client client =  em.find(Client.class, email);
 		Set<ClientTicket> boughtTickets = new HashSet<>();
-		for (EventSeat eventSeat : client.getBoughtTickets()) {
-			boughtTickets.add(new ClientTicket(eventSeat, email));
+		for (Ticket ticket : client.getBoughtTickets()) {
+			for (EventSeat e : ticket.getEventSeats()) {
+				boughtTickets.add(new ClientTicket(e, email));
+			}
 		}
 		return boughtTickets;
 	}
@@ -326,8 +354,10 @@ public class ClientRepository implements IClient {
 	public Iterable<ClientBookedTicket> getBookedTickets(String email) {
 		Client client =  em.find(Client.class, email);
 		Set<ClientBookedTicket> bookedTickets = new HashSet<>();
-		for (EventSeat eventSeat : client.getBookedTickets()) {
-			bookedTickets.add(new ClientBookedTicket(eventSeat, email));
+		for (Ticket ticket : client.getBoughtTickets()) {
+			for (EventSeat e : ticket.getEventSeats()) {
+				bookedTickets.add(new ClientBookedTicket(e, email));
+			}
 		}
 		return bookedTickets;
 	}
@@ -371,5 +401,65 @@ public class ClientRepository implements IClient {
 					"DELETE FROM Confirmation e WHERE EXTRACT(EPOCH FROM e.time) - EXTRACT(EPOCH FROM current_timestamp) >= 3600");
 			query.executeUpdate();
 			}
+	}
+
+	@Override
+	@Transactional
+	public boolean startPayment(boolean start, Long orderId) {
+		Ticket ticket = em.find(Ticket.class, orderId);
+		if (ticket.equals(null)){
+			return false;
+		}else{
+			ticket.setPaymentStarted(start);
+			try {
+				em.merge(ticket);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	}
+
+	@Override
+	@Transactional
+	public boolean checkOrder(Long orderId) {
+		Ticket ticket = em.find(Ticket.class, orderId);
+		if (ticket.equals(null)){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	@Override
+	@Transactional
+	public boolean finishPayment(Long orderId) throws IOException {
+		Date currentDate = new Date();
+		Ticket ticket = em.find(Ticket.class, orderId);
+		ticket.setBuyingTime(currentDate);
+		ticket.setBuyer(ticket.getBooker());
+		ticket.setBooker(null);
+		PdfCreator creator = new PdfCreator();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
+		for (EventSeat eventSeat : ticket.getEventSeats()) {
+			creator.createTicketInRectangle(eventSeat, pdfDoc);
+		}
+		pdfDoc.close();
+		byte[] pdfToBytes = baos.toByteArray();
+		baos.close();
+		try {
+			em.merge(ticket);
+			EmailSender sender = null;
+			if (ticket.getEmail() == null) {
+				sender = new EmailSender(ticket.getBuyer().getEmail());
+			}else {
+				sender = new EmailSender(ticket.getEmail());
+			}
+			sender.sendEmailWithTicket(pdfToBytes);
+			return true;
+		} catch (EmailError e) {
+			return false;
+		}
 	}
 }

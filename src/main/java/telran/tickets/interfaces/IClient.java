@@ -18,8 +18,11 @@ public interface IClient {
 	SuccessResponse register (RegisterClient client);
 	SuccessResponse register (ShortRegisterClient client);
 	SuccessResponse checkConfirmation (String code);
-	boolean bookTicket (ReservationRequest request);
-	boolean buyTickets(TicketsRequest request) throws IOException;
+	Long bookTicket (ReservationRequest request);
+	boolean checkOrder(Long orderId);
+	boolean startPayment(boolean start, Long orderId);
+	boolean finishPayment(Long orderId) throws IOException;
+	//boolean buyTickets(TicketsRequest request) throws IOException;
 	boolean addToFavourite (FavouriteRequest favRequest);
 	Set<ShortEventInfo> getFavourite(String phone);
 	ClientProfile getProfile(String phone);

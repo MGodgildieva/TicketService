@@ -25,7 +25,7 @@ public class ClientBookedTicket {
 		this.row = eventSeat.getSeat().getRealRow();
 		this.place = eventSeat.getSeat().getRealPlace();
 		this.price = eventSeat.getPrice();
-		this.bookingTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(eventSeat.getBookingTime());
+		this.bookingTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(eventSeat.getTicket().getBookingTime());
 	}
 	public String getEmail() {
 		return email;

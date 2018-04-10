@@ -32,6 +32,7 @@ import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.Hall;
+import telran.tickets.entities.objects.Ticket;
 import telran.tickets.entities.users.Client;
 import telran.tickets.entities.users.Organiser;
 import telran.tickets.errors.DatabaseError;
@@ -226,6 +227,8 @@ public class GeneralRepository implements IGeneral {
 	@Transactional
 	public boolean buyTicketsWithoutRegistration(TicketsRequest request) throws IOException {
 		List<String> eventSeatIds = new ArrayList<>(Arrays.asList(request.getEventSeatIds()));
+		Ticket order =  new Ticket(new Date(), false, null, request.getEmail());
+		Integer price = 0;
 		Event event = em.find(Event.class, Integer.parseInt(request.getEventId()));
 		Integer count = event.getBoughtTickets();
 		PdfCreator creator = new PdfCreator();
@@ -237,12 +240,13 @@ public class GeneralRepository implements IGeneral {
 				return false;
 			}
 			eventSeat.setTaken(true);
-			eventSeat.setBookingTime(null);
-			eventSeat.setBuyingTime(new Date());
+			eventSeat.setTicket(order);
+			price = price + Integer.parseInt(eventSeat.getPrice());
 			try {
 				em.merge(eventSeat);
 				creator.createTicketInRectangle(eventSeat, pdfDoc);
 			} catch (Exception e1) {
+				e1.printStackTrace();
 				return false;
 			}
 			count++;
@@ -251,12 +255,15 @@ public class GeneralRepository implements IGeneral {
 		byte [] pdfToBytes = baos.toByteArray();
 		baos.close();
 		event.setBoughtTickets(count);
+		order.setPrice(price);
 		try {
+			em.merge(order);
 			em.merge(event);
 			EmailSender sender = new EmailSender(request.getEmail());
 			sender.sendEmailWithTicket(pdfToBytes);
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -284,7 +291,7 @@ public class GeneralRepository implements IGeneral {
 		if (type != "" & date1 != null & date2 == null) {
 			query = em.createQuery("SELECT e FROM Event e WHERE e.date=?1 AND e.type=?3 ORDER BY e.date ASC");
 			query.setParameter(1, new Date(date1));
-			query.setParameter(3, type);
+			query.setParameter(3, type);	
 		}
 		if (type == "" & date1 != null & date2 != null) {
 			query = em.createQuery("SELECT e FROM Event e WHERE e.date>=?1 AND e.date<=?2 ORDER BY e.date ASC");

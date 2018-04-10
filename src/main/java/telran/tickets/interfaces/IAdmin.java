@@ -12,7 +12,7 @@ public interface IAdmin {
 	boolean banOrganiser(BanRequest banRequest);
 	boolean addLicense(String email);
 	boolean cleanDatabase();
-	boolean deleteTicket(String ticketId);
+	boolean deleteTicket(Long ticketId);
 	public boolean falseHall(Integer width, Integer height);
 	public boolean falseEvent(String artist, String title, String city, Date date, String time, String type,
 			String description, String imageUrl, Integer hallId,

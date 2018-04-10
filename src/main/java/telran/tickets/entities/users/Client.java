@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 import telran.tickets.api.dto.RegisterClient;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.entities.objects.Event;
-import telran.tickets.entities.objects.EventSeat;
+import telran.tickets.entities.objects.Ticket;
 
 @Entity
 public class Client implements Serializable {
@@ -40,9 +40,9 @@ public class Client implements Serializable {
 	@ManyToMany(cascade =  CascadeType.ALL)
 	Set<Event> favourite;
 	@OneToMany(cascade =  CascadeType.ALL, mappedBy = "buyer")
-	Set<EventSeat> boughtTickets;
+	Set<Ticket> boughtTickets;
 	@OneToMany(cascade =  CascadeType.ALL, mappedBy = "booker")
-	Set<EventSeat> bookedTickets;
+	Set<Ticket> bookedTickets;
 	
 
 	public Client() {
@@ -167,11 +167,11 @@ public class Client implements Serializable {
 		this.favourite = favourite;
 	}
 
-	public Set<EventSeat> getBoughtTickets() {
+	public Set<Ticket> getBoughtTickets() {
 		return boughtTickets;
 	}
 
-	public void setBoughtTickets(Set<EventSeat> boughtTickets) {
+	public void setBoughtTickets(Set<Ticket> boughtTickets) {
 		this.boughtTickets = boughtTickets;
 	}
 
@@ -251,11 +251,11 @@ public class Client implements Serializable {
 		this.phone = phone;
 	}
 
-	public Set<EventSeat> getBookedTickets() {
+	public Set<Ticket> getBookedTickets() {
 		return bookedTickets;
 	}
 
-	public void setBookedTickets(Set<EventSeat> bookedTickets) {
+	public void setBookedTickets(Set<Ticket> bookedTickets) {
 		this.bookedTickets = bookedTickets;
 	}
 

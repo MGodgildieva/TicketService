@@ -1,6 +1,5 @@
 package telran.tickets.entities.objects;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,12 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import telran.tickets.api.dto.HallEventSeat;
-import telran.tickets.entities.users.Client;
 
 @Entity
 public class EventSeat {
@@ -26,24 +21,14 @@ public class EventSeat {
 	@ManyToOne (cascade = CascadeType.ALL)
 	private Seat seat;
 	private boolean isTaken;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date bookingTime;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date buyingTime;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Client buyer;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Client booker;
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Ticket ticket;
 	public EventSeat() {
 	}
 	public EventSeat(Event event, Hall hall, HallEventSeat seatDto) throws Exception {
 		this.event =  event;
 		this.price = seatDto.getPrice();
 		this.isTaken = seatDto.getIsTaken();
-		this.bookingTime = null;
-		this.buyingTime =  null;
-		this.buyer =  null;
-		this.booker = null;
 		List<Seat> seats =  hall.getSeats();
 		for (Seat seat : seats) {
 			if (seat.getPlace().equals(seatDto.getPlace()) && seat.getRow().equals(seatDto.getRow())) {
@@ -56,20 +41,10 @@ public class EventSeat {
 		this.event =  event;
 		this.price = price;
 		this.isTaken = false;
-		this.bookingTime = null;
-		this.buyingTime =  null;
-		this.buyer =  null;
-		this.booker = null;
 		this.seat = seat;
 		
 	}
 	
-	public Client getBuyer() {
-		return buyer;
-	}
-	public void setBuyer(Client buyer) {
-		this.buyer = buyer;
-	}
 	public Event getEvent() {
 		return event;
 	}
@@ -97,24 +72,13 @@ public class EventSeat {
 	public Integer getId() {
 		return id;
 	}
-	public Date getBookingTime() {
-		return bookingTime;
+	public Ticket getTicket() {
+		return ticket;
 	}
-	public void setBookingTime(Date bookingTime) {
-		this.bookingTime = bookingTime;
+	public void setTicket(Ticket ticket) {
+		this.ticket = ticket;
 	}
-	public Date getBuyingTime() {
-		return buyingTime;
-	}
-	public void setBuyingTime(Date buyingTime) {
-		this.buyingTime = buyingTime;
-	}
-	public Client getBooker() {
-		return booker;
-	}
-	public void setBooker(Client booker) {
-		this.booker = booker;
-	}
+	
 	
 	
 	

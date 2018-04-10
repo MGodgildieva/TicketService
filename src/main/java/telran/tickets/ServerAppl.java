@@ -137,14 +137,26 @@ public class ServerAppl {
 	}
 	
 	@PostMapping(APIConstants.BOOK_TICKET) 
-	public boolean bookTicket(@RequestBody ReservationRequest request) {
+	public Long bookTicket(@RequestBody ReservationRequest request) {
 		return clientRepository.bookTicket(request);
 	}
+	@GetMapping(APIConstants.CHECK_ORDER)
+	boolean checkOrder(@RequestParam Long orderId) {
+		return clientRepository.checkOrder(orderId);
+	}
+	@GetMapping(APIConstants.START_PAYMENT)
+	boolean startPayment(@RequestParam boolean start, @RequestParam Long ticketId) {
+		return clientRepository.startPayment(start, ticketId);
+	}
+	@GetMapping(APIConstants.FINISH_PAYMENT)
+	boolean finishPayment(@RequestParam Long ticketId) throws IOException{
+		return clientRepository.finishPayment(ticketId);
+	}
 
-	@PostMapping(APIConstants.BUY_TICKETS) 
+	/*@PostMapping(APIConstants.BUY_TICKETS) 
 	public boolean buyTickets(@RequestBody TicketsRequest request) throws IOException {
 		return clientRepository.buyTickets(request);
-	}
+	}*/
 
 	@PostMapping(APIConstants.ADD_TO_FAVOURITE) 
 	public boolean addToFavourite(@RequestBody FavouriteRequest request) {
@@ -266,7 +278,7 @@ public class ServerAppl {
 		return adminRepository.cleanDatabase();
 	}
 	@DeleteMapping(APIConstants.BUY_TICKET)
-	public boolean deleteTicket(@RequestParam String ticketId) {
+	public boolean deleteTicket(@RequestParam Long ticketId) {
 		return adminRepository.deleteTicket(ticketId);
 	}
 	
