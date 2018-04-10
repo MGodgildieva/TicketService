@@ -2,6 +2,8 @@ package telran.tickets.api.dto;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import telran.tickets.entities.objects.Event;
@@ -39,6 +41,13 @@ public class HallEventInfo {
 		for (EventSeat eventSeat : event.getSeats()) {
 			seats.add(new HallEventSeat(eventSeat));
 		}
+		Collections.sort(seats, new Comparator<HallEventSeat>() {
+
+			@Override
+			public int compare(HallEventSeat o1, HallEventSeat o2) {
+				return Integer.parseInt(o1.getRow()) - Integer.parseInt(o2.getRow());
+			}
+		});
 		this.hallScheme = new EventScheme(hall.getWidth(), hall.getHeight(), seats.toArray(new HallEventSeat[seats.size()]));
 	}
 	
