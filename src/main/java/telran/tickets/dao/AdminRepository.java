@@ -98,7 +98,7 @@ public class AdminRepository implements IAdmin {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	@Scheduled(cron = "0 0 12 * * *")
 	@Override
 	@Transactional
@@ -126,7 +126,7 @@ public class AdminRepository implements IAdmin {
 			return false;
 		}
 		
-	}
+	}*/
 	
 	@Transactional
 	@Override
