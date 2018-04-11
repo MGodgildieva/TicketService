@@ -58,6 +58,8 @@ public interface APIConstants {
 	public static final String CHECK_ORDER = "/check";
 	public static final String START_PAYMENT = "/payment";
 	public static final String FINISH_PAYMENT = START_PAYMENT + "/finish";
+	public static final String EMAIL = "/email";
+	public static final String ORDER = "/order";
 	
 	
 	

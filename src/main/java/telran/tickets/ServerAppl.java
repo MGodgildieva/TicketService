@@ -141,8 +141,8 @@ public class ServerAppl {
 		return clientRepository.bookTicket(request);
 	}
 	@GetMapping(APIConstants.CHECK_ORDER)
-	boolean checkOrder(@RequestParam Long orderId) {
-		return clientRepository.checkOrder(orderId);
+	boolean checkOrder(@RequestParam Long ticketId) {
+		return clientRepository.checkOrder(ticketId);
 	}
 	@GetMapping(APIConstants.START_PAYMENT)
 	boolean startPayment(@RequestParam boolean start, @RequestParam Long ticketId) {
@@ -151,6 +151,14 @@ public class ServerAppl {
 	@GetMapping(APIConstants.FINISH_PAYMENT)
 	boolean finishPayment(@RequestParam Long ticketId) throws IOException{
 		return clientRepository.finishPayment(ticketId);
+	}
+	@GetMapping(APIConstants.EMAIL)
+	boolean sendEmail(String email, Long ticketId) throws IOException{
+		return clientRepository.sendEmail(email, ticketId);
+	}
+	@DeleteMapping(APIConstants.ORDER)
+	boolean deleteOrder(Long ticketId) {
+		return clientRepository.deleteTicket(ticketId);
 	}
 
 	/*@PostMapping(APIConstants.BUY_TICKETS) 

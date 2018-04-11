@@ -12,7 +12,6 @@ import telran.tickets.api.dto.ReservationRequest;
 import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.SuccessResponse;
-import telran.tickets.api.dto.TicketsRequest;
 
 public interface IClient {
 	SuccessResponse register (RegisterClient client);
@@ -22,6 +21,7 @@ public interface IClient {
 	boolean checkOrder(Long orderId);
 	boolean startPayment(boolean start, Long orderId);
 	boolean finishPayment(Long orderId) throws IOException;
+	boolean sendEmail(String email, Long orderId) throws IOException;
 	//boolean buyTickets(TicketsRequest request) throws IOException;
 	boolean addToFavourite (FavouriteRequest favRequest);
 	Set<ShortEventInfo> getFavourite(String phone);
@@ -29,5 +29,6 @@ public interface IClient {
 	ClientProfile changeProfile(ClientProfile clientWithNewInfo);
 	Iterable<ClientTicket> getBoughtTickets(String email);
 	Iterable<ClientBookedTicket> getBookedTickets(String email);
+	boolean deleteTicket(Long orderId);
 	
 }
