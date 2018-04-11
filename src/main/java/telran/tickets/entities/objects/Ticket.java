@@ -1,8 +1,8 @@
 package telran.tickets.entities.objects;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ public class Ticket {
 	@Id
 	private Long ticketId;
 	@OneToMany(cascade =  CascadeType.ALL, mappedBy = "ticket")
-	private Set<EventSeat> eventSeats;
+	private List<EventSeat> eventSeats;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date bookingTime;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -35,7 +35,7 @@ public class Ticket {
 	public Ticket() {
 	}
 	
-	public Ticket(Long ticketId, Set<EventSeat> eventSeats, Date bookingTime, Date buyingTime, Boolean paymentStarted,
+	public Ticket(Long ticketId, List<EventSeat> eventSeats, Date bookingTime, Date buyingTime, Boolean paymentStarted,
 			Client booker, Client buyer, String email, Integer price) {
 		this.ticketId = ticketId;
 		this.eventSeats = eventSeats;
@@ -52,7 +52,7 @@ public class Ticket {
 	public Ticket(Date bookingTime, Client booker, 
 			String email) {
 		this.ticketId = bookingTime.getTime();
-		this.eventSeats = new HashSet<>();
+		this.eventSeats = new ArrayList<>();
 		this.bookingTime = bookingTime;
 		this.paymentStarted = false;
 		this.booker = booker;
@@ -62,7 +62,7 @@ public class Ticket {
 	public Ticket(Date buyingTime, Boolean paymentStarted, Client buyer, 
 			String email) {
 		this.ticketId = buyingTime.getTime();
-		this.eventSeats = new HashSet<>();
+		this.eventSeats = new ArrayList<>();
 		this.buyingTime = buyingTime;
 		this.paymentStarted = paymentStarted;
 		this.buyer = buyer;
@@ -70,10 +70,10 @@ public class Ticket {
 		this.price = 0;
 	}
 
-	public Set<EventSeat> getEventSeats() {
+	public List<EventSeat> getEventSeats() {
 		return eventSeats;
 	}
-	public void setEventSeats(Set<EventSeat> eventSeats) {
+	public void setEventSeats(List<EventSeat> eventSeats) {
 		this.eventSeats = eventSeats;
 	}
 	public Date getBookingTime() {

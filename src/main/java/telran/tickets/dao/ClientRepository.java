@@ -403,6 +403,15 @@ public class ClientRepository implements IClient {
 		ticket.setBuyingTime(currentDate);
 		ticket.setBuyer(ticket.getBooker());
 		ticket.setBooker(null);
+		Event event = ticket.getEventSeats().get(0).getEvent();
+		Integer count = event.getBoughtTickets();
+		count = count + ticket.getEventSeats().size();
+		event.setBoughtTickets(count);
+		try {
+			em.merge(event);
+		} catch (Exception e1) {
+			return false;
+		}
 		if (ticket.getBuyer() != null) {
 			PdfCreator creator = new PdfCreator();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
