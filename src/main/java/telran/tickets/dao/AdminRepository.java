@@ -98,13 +98,13 @@ public class AdminRepository implements IAdmin {
 		}
 	}
 
-/*	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Scheduled(cron = "0 0 12 * * *")
 	@Override
 	@Transactional
 	@Modifying
 	public boolean cleanDatabase() {
-		Query query1 = em.createQuery("SELECT e FROM Event e WHERE EXTRACT(EPOCH FROM e.date) - EXTRACT(EPOCH FROM current_timestamp) >= (60*60*24*30)");
+		Query query1 = em.createQuery("SELECT e FROM Event e WHERE DATE_PART('day', current_timestamp - e.date) >= 31");
 		List<Event> events =  query1.getResultList();
 		if(!events.isEmpty()) {
 			Set<Integer> ids = new HashSet<>();
@@ -113,10 +113,10 @@ public class AdminRepository implements IAdmin {
 			}
 			Query query2 = em.createQuery("DELETE FROM EventSeat e WHERE event_event_id IN ?1");
 			query2.setParameter(1, ids);
-			Query query = em.createQuery("DELETE FROM Event e WHERE EXTRACT(EPOCH FROM e.date) - EXTRACT(EPOCH FROM current_timestamp) >= (60*60*24*30)");
+			query2.executeUpdate();
+			Query query = em.createQuery("DELETE FROM Event e WHERE DATE_PART('day', current_timestamp - e.date) >= 31");
 			try {
 				query.executeUpdate();
-				query2.executeUpdate();
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -126,7 +126,7 @@ public class AdminRepository implements IAdmin {
 			return false;
 		}
 		
-	}*/
+	}
 	
 	@Transactional
 	@Override
@@ -168,8 +168,9 @@ public class AdminRepository implements IAdmin {
 		List<EventSeat> eventSeats = new ArrayList<>();
 		for (Seat seat : hall.getSeats()) {
 			Random rand = new Random();
-			Integer colour = rand.nextInt(10)+1;
-			String price = Integer.toString(colour*100);
+			Integer number = rand.nextInt(10)+1;
+			Integer colour = number*1000;
+			String price = Integer.toString(number*100);
 			EventSeat e =  new EventSeat(event, hall, seat, price, colour);
 			eventSeats.add(e);
 		}

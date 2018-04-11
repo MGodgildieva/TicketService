@@ -281,10 +281,10 @@ public class ServerAppl {
 	public boolean addLicense(@RequestParam String email) {
 		return adminRepository.addLicense(email);
 	}
-	/*@DeleteMapping(APIConstants.CLEAN) 
+	@DeleteMapping(APIConstants.CLEAN) 
 	public boolean cleanDatabase() {
 		return adminRepository.cleanDatabase();
-	}*/
+	}
 	@DeleteMapping(APIConstants.BUY_TICKET)
 	public boolean deleteTicket(@RequestParam Long ticketId) {
 		return adminRepository.deleteTicket(ticketId);
