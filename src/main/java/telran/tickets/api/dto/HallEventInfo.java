@@ -45,7 +45,11 @@ public class HallEventInfo {
 
 			@Override
 			public int compare(HallEventSeat o1, HallEventSeat o2) {
-				return Integer.parseInt(o1.getRow()) - Integer.parseInt(o2.getRow());
+				int sComp = Integer.parseInt(o1.getRow()) - Integer.parseInt(o2.getRow());
+	            if (sComp != 0) {
+	               return sComp;
+	            } 
+				return Integer.parseInt(o1.getPlace()) - Integer.parseInt(o2.getPlace());
 			}
 		});
 		this.hallScheme = new EventScheme(hall.getWidth(), hall.getHeight(), seats.toArray(new HallEventSeat[seats.size()]));
