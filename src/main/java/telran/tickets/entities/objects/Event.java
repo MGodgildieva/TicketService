@@ -102,7 +102,7 @@ public class Event {
 		this.allTickets =  event.getAllTickets();
 		Set<Integer> prices = new HashSet<>();
 		for (HallEventSeat eventSeat : event.getScheme().getSeats()) {
-			prices.add(Integer.parseInt(eventSeat.getPrice()));
+			prices.add(eventSeat.getPrice());
 			seats.add(new EventSeat(this, hall, eventSeat));
 		}
 		List<Integer> pricesToSort = new ArrayList<>(prices);
