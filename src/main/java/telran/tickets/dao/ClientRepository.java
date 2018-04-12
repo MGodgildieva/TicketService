@@ -34,6 +34,7 @@ import telran.tickets.api.dto.ReservationRequest;
 import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.SuccessResponse;
+import telran.tickets.api.dto.TicketId;
 import telran.tickets.entities.objects.Event;
 import telran.tickets.entities.objects.EventSeat;
 import telran.tickets.entities.objects.Ticket;
@@ -176,7 +177,7 @@ public class ClientRepository implements IClient {
 
 	@Override
 	@Transactional
-	public Long bookTicket(ReservationRequest request) {
+	public TicketId bookTicket(ReservationRequest request) {
 		Date currentDate = new Date();
 		Ticket ticket = new Ticket(currentDate, null, null);
 		Client client = null;
@@ -187,14 +188,18 @@ public class ClientRepository implements IClient {
 		ticket.setBooker(client);
 		for (String seatId : request.getEventSeatIds()) {
 			EventSeat seat = em.find(EventSeat.class, Integer.parseInt(seatId));
-			seat.setTaken(request.getIsBooked());
-			seat.setTicket(ticket);
-			price = price + Integer.parseInt(seat.getPrice());
-			try {
-				em.merge(seat);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return 0l;
+			if (!seat.getIsTaken()) {
+				seat.setTaken(request.getIsBooked());
+				seat.setTicket(ticket);
+				price = price + Integer.parseInt(seat.getPrice());
+				try {
+					em.merge(seat);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return new TicketId("Database error");
+				} 
+			}else {
+				return new TicketId("Seat has already been taken");
 			}
 		}
 		if (client != null) {
@@ -207,10 +212,10 @@ public class ClientRepository implements IClient {
 		ticket.setPrice(price);
 		try {
 			em.merge(ticket);
-			return ticket.getTicketId();
+			return new TicketId(ticket.getTicketId());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 0l;
+			return new TicketId("Database error");
 		}
 	}
 

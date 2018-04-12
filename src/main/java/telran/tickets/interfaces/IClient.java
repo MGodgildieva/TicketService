@@ -12,12 +12,13 @@ import telran.tickets.api.dto.ReservationRequest;
 import telran.tickets.api.dto.ShortEventInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.SuccessResponse;
+import telran.tickets.api.dto.TicketId;
 
 public interface IClient {
 	SuccessResponse register (RegisterClient client);
 	SuccessResponse register (ShortRegisterClient client);
 	SuccessResponse checkConfirmation (String code);
-	Long bookTicket (ReservationRequest request);
+	TicketId bookTicket (ReservationRequest request);
 	boolean checkOrder(Long orderId);
 	boolean startPayment(boolean start, Long orderId);
 	boolean finishPayment(Long orderId) throws IOException;

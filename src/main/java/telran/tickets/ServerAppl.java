@@ -46,6 +46,7 @@ import telran.tickets.api.dto.ShortEventInfos;
 import telran.tickets.api.dto.ShortHallInfo;
 import telran.tickets.api.dto.ShortRegisterClient;
 import telran.tickets.api.dto.SuccessResponse;
+import telran.tickets.api.dto.TicketId;
 import telran.tickets.api.dto.TicketsRequest;
 import telran.tickets.api.dto.TypeRequest;
 import telran.tickets.api.dto.VisibleRequest;
@@ -137,7 +138,7 @@ public class ServerAppl {
 	}
 	
 	@PostMapping(APIConstants.BOOK_TICKET) 
-	public Long bookTicket(@RequestBody ReservationRequest request) {
+	public TicketId bookTicket(@RequestBody ReservationRequest request) {
 		return clientRepository.bookTicket(request);
 	}
 	@GetMapping(APIConstants.CHECK_ORDER)
