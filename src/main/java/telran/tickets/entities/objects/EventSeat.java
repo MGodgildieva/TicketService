@@ -28,7 +28,7 @@ public class EventSeat {
 	}
 	public EventSeat(Event event, Hall hall, HallEventSeat seatDto) throws Exception {
 		this.event =  event;
-		this.price = seatDto.getPrice();
+		this.price = seatDto.getPrice().toString();
 		this.colour = seatDto.getColour();
 		this.isTaken = seatDto.getIsTaken();
 		List<Seat> seats =  hall.getSeats();

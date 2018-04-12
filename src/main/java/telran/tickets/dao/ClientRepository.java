@@ -226,7 +226,7 @@ public class ClientRepository implements IClient {
 	@Transactional
 	@Scheduled(cron = "*/60 * * * * *")
 	public void checkSeat() {
-		Query query1 = em.createQuery("SELECT e FROM Ticket e");
+		Query query1 = em.createQuery("SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE");
 		if (!query1.getResultList().isEmpty()) {
 			Query query = em.createQuery(
 					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");

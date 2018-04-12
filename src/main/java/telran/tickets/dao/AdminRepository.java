@@ -1,5 +1,6 @@
 package telran.tickets.dao;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -168,10 +169,12 @@ public class AdminRepository implements IAdmin {
 		List<EventSeat> eventSeats = new ArrayList<>();
 		for (Seat seat : hall.getSeats()) {
 			Random rand = new Random();
-			Integer number = rand.nextInt(10)+1;
-			Integer colour = number*1000;
-			String price = Integer.toString(number*100);
-			EventSeat e =  new EventSeat(event, hall, seat, price, colour);
+			int r = rand.nextInt(3)+1;
+			int g = rand.nextInt();
+			int b = rand.nextInt();
+			Color color = new Color(r, g, b);
+			String price = Integer.toString(r*100);
+			EventSeat e =  new EventSeat(event, hall, seat, price, color.getRGB());
 			eventSeats.add(e);
 		}
 		event.setSeats(eventSeats);

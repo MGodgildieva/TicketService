@@ -6,7 +6,7 @@ public class HallEventSeat {
 	private Integer id;
 	private String place;
 	private String row;
-	private String price;
+	private Integer price;
 	private Integer colour;
 	private String realRow;
 	private String realPlace;
@@ -20,7 +20,7 @@ public class HallEventSeat {
 		this.colour = seat.getColour();
 		this.place =  seat.getSeat().getPlace();
 		this.row = seat.getSeat().getRow();
-		this.price = seat.getPrice();
+		this.price = Integer.parseInt(seat.getPrice());
 		this.realPlace = seat.getSeat().getRealPlace();
 		this.realRow = seat.getSeat().getRealRow();
 		this.type = seat.getSeat().getType();
@@ -42,10 +42,10 @@ public class HallEventSeat {
 	public void setRow(String row) {
 		this.row = row;
 	}
-	public String getPrice() {
+	public Integer getPrice() {
 		return price;
 	}
-	public void setPrice(String price) {
+	public void setPrice(Integer price) {
 		this.price = price;
 	}
 	public String getRealRow() {
