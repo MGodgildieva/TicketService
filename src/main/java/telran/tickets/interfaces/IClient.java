@@ -31,5 +31,6 @@ public interface IClient {
 	Iterable<ClientTicket> getBoughtTickets(String email);
 	Iterable<ClientBookedTicket> getBookedTickets(String email);
 	boolean deleteTicket(Long orderId);
+	public void checkSeat();
 	
 }

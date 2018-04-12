@@ -202,6 +202,10 @@ public class ServerAppl {
 	public BookedTickets getBookedTickets(@RequestParam String email) {
 		return new BookedTickets(clientRepository.getBookedTickets(email));
 	}
+	@GetMapping("/cleanorders")
+	public void cleanOrders() {
+		clientRepository.checkSeat();
+	}
 
 	// Organiser
 	@PostMapping(APIConstants.ORG) 

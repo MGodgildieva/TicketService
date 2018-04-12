@@ -2,6 +2,7 @@ package telran.tickets.dao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -229,13 +230,14 @@ public class ClientRepository implements IClient {
 		if (!query1.getResultList().isEmpty()) {
 			Query query = em.createQuery(
 					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
-			List<Ticket> bookedSeats = query.getResultList();
+			List<Ticket> bookedSeats = new ArrayList<>(query.getResultList());
+			List<Long> ids = new ArrayList<>();
 			for (Ticket ticket : bookedSeats) {
-				for (EventSeat e : ticket.getEventSeats()) {
-					e.setTaken(false);
-					em.merge(e);
-				}
+				ids.add(ticket.getTicketId());
 			}
+			Query query3 = em.createQuery("UPDATE EventSeat e SET e.isTaken = false, ticket_ticket_id = null WHERE ticket_ticket_id IN ?1");
+			query3.setParameter(1, ids);
+			query3.executeUpdate();
 			Query query2 = em.createQuery(
 					"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
 			query2.executeUpdate();
@@ -325,7 +327,7 @@ public class ClientRepository implements IClient {
 	public Iterable<ClientBookedTicket> getBookedTickets(String email) {
 		Client client = em.find(Client.class, email);
 		Set<ClientBookedTicket> bookedTickets = new HashSet<>();
-		for (Ticket ticket : client.getBoughtTickets()) {
+		for (Ticket ticket : client.getBookedTickets()) {
 			for (EventSeat e : ticket.getEventSeats()) {
 				bookedTickets.add(new ClientBookedTicket(e, email));
 			}
