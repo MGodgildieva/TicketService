@@ -54,6 +54,7 @@ import telran.tickets.errors.DatabaseError;
 import telran.tickets.errors.EmailError;
 import telran.tickets.errors.JsonError;
 import telran.tickets.errors.RegistrationError;
+import telran.tickets.errors.SeatTakenError;
 import telran.tickets.interfaces.IAdmin;
 import telran.tickets.interfaces.IClient;
 import telran.tickets.interfaces.IGeneral;
@@ -137,9 +138,16 @@ public class ServerAppl {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@PostMapping(APIConstants.BOOK_TICKET) 
-	public TicketId bookTicket(@RequestBody ReservationRequest request) {
-		return clientRepository.bookTicket(request);
+	public ResponseEntity bookTicket(@RequestBody ReservationRequest request) {
+		try {
+			return ResponseEntity.ok(clientRepository.bookTicket(request));
+		}catch(DatabaseError e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new TicketId(e.getMessage()));
+		}catch(SeatTakenError e) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(new TicketId(e.getMessage()));
+		}
 	}
 	@GetMapping(APIConstants.CHECK_ORDER)
 	boolean checkOrder(@RequestParam Long ticketId) {

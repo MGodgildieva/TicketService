@@ -45,6 +45,7 @@ import telran.tickets.errors.DatabaseError;
 import telran.tickets.errors.EmailError;
 import telran.tickets.errors.JsonError;
 import telran.tickets.errors.RegistrationError;
+import telran.tickets.errors.SeatTakenError;
 import telran.tickets.interfaces.IClient;
 
 @Repository
@@ -196,10 +197,10 @@ public class ClientRepository implements IClient {
 					em.merge(seat);
 				} catch (Exception e) {
 					e.printStackTrace();
-					return new TicketId("Database error");
+					throw new DatabaseError("Database error");
 				} 
 			}else {
-				return new TicketId("Seat has already been taken");
+				throw new SeatTakenError("This seat has already been taken, please, choose another.");
 			}
 		}
 		if (client != null) {
@@ -207,6 +208,7 @@ public class ClientRepository implements IClient {
 				em.merge(client);
 			} catch (Exception e) {
 				e.printStackTrace();
+				throw new DatabaseError("Database error");
 			}
 		}
 		ticket.setPrice(price);
@@ -215,7 +217,7 @@ public class ClientRepository implements IClient {
 			return new TicketId(ticket.getTicketId());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new TicketId("Database error");
+			throw new DatabaseError("Database error");
 		}
 	}
 
