@@ -2,9 +2,7 @@ package telran.tickets.dao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -231,7 +229,7 @@ public class ClientRepository implements IClient {
 		List<Ticket> tickets = new ArrayList<>(query1.getResultList());
 		if (!tickets.isEmpty()) {
 			Query query = em.createQuery(
-					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM localtimestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
+					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM localtimestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 1200");
 			List<Ticket> bookedSeats = new ArrayList<>(query.getResultList());
 			for (Ticket ticket : bookedSeats) {
 				Query query3 = em.createQuery("UPDATE EventSeat e SET e.isTaken = false, ticket_ticket_id = null WHERE ticket_ticket_id = ?1");
@@ -239,7 +237,7 @@ public class ClientRepository implements IClient {
 				query3.executeUpdate();
 			}
 			Query query2 = em.createQuery(
-					"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM localtimestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
+					"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM localtimestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 1200");
 			query2.executeUpdate();
 		}
 	}
@@ -405,6 +403,10 @@ public class ClientRepository implements IClient {
 	public boolean finishPayment(Long orderId) throws IOException {
 		Date currentDate = new Date();
 		Ticket ticket = em.find(Ticket.class, orderId);
+		if (ticket.equals(null)) {
+			return false;
+		} 
+		ticket.setPaymentStarted(true);
 		ticket.setBuyingTime(currentDate);
 		ticket.setBuyer(ticket.getBooker());
 		ticket.setBooker(null);
@@ -479,7 +481,7 @@ public class ClientRepository implements IClient {
 			query.setParameter(1, orderId);
 			query.executeUpdate();
 			Query query2 = em.createQuery(
-						"DELETE FROM Ticket e WHERE e.ticketId = ?1");
+						"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE e.ticketId = ?1");
 			query2.setParameter(1, orderId);
 			query2.executeUpdate();
 				return true;
