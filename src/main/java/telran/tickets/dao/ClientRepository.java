@@ -158,7 +158,7 @@ public class ClientRepository implements IClient {
 		if (client.getName() != clientWithNewInfo.getName()) {
 			client.setName(clientWithNewInfo.getName());
 		}
-		if (client.getPassword() != clientWithNewInfo.getPassword()) {
+		if (client.getPassword() != clientWithNewInfo.getPassword() && clientWithNewInfo.getPassword() != "") {
 			client.setPassword(clientWithNewInfo.getPassword());
 		}
 		if (client.getPostcode() != clientWithNewInfo.getPostcode()) {
@@ -316,9 +316,7 @@ public class ClientRepository implements IClient {
 		Client client = em.find(Client.class, email);
 		Set<ClientTicket> boughtTickets = new HashSet<>();
 		for (Ticket ticket : client.getBoughtTickets()) {
-			for (EventSeat e : ticket.getEventSeats()) {
-				boughtTickets.add(new ClientTicket(e, email));
-			}
+			boughtTickets.add(new ClientTicket(ticket));
 		}
 		return boughtTickets;
 	}
@@ -476,14 +474,17 @@ public class ClientRepository implements IClient {
 	@Override
 	@Transactional
 	public boolean deleteTicket(Long orderId) {
-		Ticket ticket = em.find(Ticket.class, orderId);
-		if (!ticket.getPaymentStarted()) {
-			try {
-				em.remove(ticket);
+		Query query1 = em.createQuery("SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND e.ticketId = ?1");
+		query1.setParameter(1, orderId);
+		if (!query1.getResultList().isEmpty()) {
+			Query query = em.createQuery("UPDATE EventSeat e SET e.isTaken = false, ticket_ticket_id = null WHERE ticket_ticket_id = ?1");
+			query.setParameter(1, orderId);
+			query.executeUpdate();
+			Query query2 = em.createQuery(
+						"DELETE FROM Ticket e WHERE e.ticketId = ?1");
+			query2.setParameter(1, orderId);
+			query2.executeUpdate();
 				return true;
-			} catch (Exception e) {
-				return false;
-			}
 		} else {
 			return false;
 		}

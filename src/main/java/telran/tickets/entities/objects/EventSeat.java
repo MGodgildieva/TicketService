@@ -21,7 +21,7 @@ public class EventSeat {
 	@ManyToOne (cascade = CascadeType.ALL)
 	private Seat seat;
 	private boolean isTaken;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne()
 	private Ticket ticket;
 	private Integer colour;
 	public EventSeat() {

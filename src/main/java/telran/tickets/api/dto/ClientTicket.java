@@ -1,85 +1,48 @@
 package telran.tickets.api.dto;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import telran.tickets.entities.objects.EventSeat;
+import telran.tickets.entities.objects.Ticket;
 
 public class ClientTicket {
-	String email;
-	String eventTitle;
-	String hallTitle;
-	String date;
-	String time;
-	String row;
-	String place;
-	String price;
-	String buyingTime;
+	Long ticketId;
+	Boolean isAlive;
+	List<HallEventSeat> seats;
 	public ClientTicket() {
 	}
-	public ClientTicket(EventSeat eventSeat, String email) {
-		this.email =  email;
-		this.eventTitle = eventSeat.getEvent().getTitle();
-		this.hallTitle = eventSeat.getEvent().getHall().getHallName();
-		this.date = new SimpleDateFormat("dd/MM/yyyy").format(eventSeat.getEvent().getDate());
-		this.time = eventSeat.getEvent().getTime();
-		this.row = eventSeat.getSeat().getRealRow();
-		this.place = eventSeat.getSeat().getRealPlace();
-		this.price = eventSeat.getPrice();
-		this.buyingTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(eventSeat.getTicket().getBuyingTime());
+	public ClientTicket(Ticket ticket) {
+		this.ticketId = ticket.getTicketId();
+		if (ticket.getEventSeats().get(0).getEvent().getDate().after(new Date())){
+			this.isAlive = true;
+		}else {
+			this.isAlive = false;
+		}
+		List<HallEventSeat> seats =  new ArrayList<>();
+		for (EventSeat seat : ticket.getEventSeats()) {
+			seats.add(new HallEventSeat(seat));
+		}
+		this.seats = seats;
 	}
-	public String getEmail() {
-		return email;
+	public Long getTicketId() {
+		return ticketId;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setTicketId(Long ticketId) {
+		this.ticketId = ticketId;
 	}
-	public String getEventTitle() {
-		return eventTitle;
+	public Boolean getIsAlive() {
+		return isAlive;
 	}
-	public void setEventTitle(String eventTitle) {
-		this.eventTitle = eventTitle;
+	public void setIsAlive(Boolean isAlive) {
+		this.isAlive = isAlive;
 	}
-	public String getHallTitle() {
-		return hallTitle;
+	public List<HallEventSeat> getSeats() {
+		return seats;
 	}
-	public void setHallTitle(String hallTitle) {
-		this.hallTitle = hallTitle;
-	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
-	}
-	public String getTime() {
-		return time;
-	}
-	public void setTime(String time) {
-		this.time = time;
-	}
-	public String getRow() {
-		return row;
-	}
-	public void setRow(String row) {
-		this.row = row;
-	}
-	public String getPlace() {
-		return place;
-	}
-	public void setPlace(String place) {
-		this.place = place;
-	}
-	public String getPrice() {
-		return price;
-	}
-	public void setPrice(String price) {
-		this.price = price;
-	}
-	public String getBuyingTime() {
-		return buyingTime;
-	}
-	public void setBuyingTime(String buyingTime) {
-		this.buyingTime = buyingTime;
+	public void setSeats(List<HallEventSeat> seats) {
+		this.seats = seats;
 	}
 	
 	
