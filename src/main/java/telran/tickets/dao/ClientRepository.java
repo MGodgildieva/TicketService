@@ -481,7 +481,7 @@ public class ClientRepository implements IClient {
 			query.setParameter(1, orderId);
 			query.executeUpdate();
 			Query query2 = em.createQuery(
-						"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE e.ticketId = ?1");
+						"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND e.ticketId = ?1");
 			query2.setParameter(1, orderId);
 			query2.executeUpdate();
 				return true;
