@@ -108,13 +108,11 @@ public class AdminRepository implements IAdmin {
 		Query query1 = em.createQuery("SELECT e FROM Event e WHERE DATE_PART('day', current_timestamp - e.date) >= 31");
 		List<Event> events =  query1.getResultList();
 		if(!events.isEmpty()) {
-			Set<Integer> ids = new HashSet<>();
 			for (Event event : events) {
-				ids.add(event.getEventId());
+				Query query2 = em.createQuery("DELETE FROM EventSeat e WHERE event_event_id = ?1");
+				query2.setParameter(1, event.getEventId());
+				query2.executeUpdate();
 			}
-			Query query2 = em.createQuery("DELETE FROM EventSeat e WHERE event_event_id IN ?1");
-			query2.setParameter(1, ids);
-			query2.executeUpdate();
 			Query query = em.createQuery("DELETE FROM Event e WHERE DATE_PART('day', current_timestamp - e.date) >= 31");
 			try {
 				query.executeUpdate();

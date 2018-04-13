@@ -1,13 +1,13 @@
 package telran.tickets.api.dto;
 
-public class BoughtTickets {
+public class ClientTickets {
 	Iterable<ClientTicket> tickets;
 
-	public BoughtTickets(Iterable<ClientTicket> tickets) {
+	public ClientTickets(Iterable<ClientTicket> tickets) {
 		this.tickets = tickets;
 	}
 
-	public BoughtTickets() {
+	public ClientTickets() {
 	}
 
 	public Iterable<ClientTicket> getTickets() {

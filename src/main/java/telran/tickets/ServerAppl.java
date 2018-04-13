@@ -23,8 +23,7 @@ import telran.tickets.api.APIConstants;
 import telran.tickets.api.dto.AddEvent;
 import telran.tickets.api.dto.AddOrganiser;
 import telran.tickets.api.dto.BanRequest;
-import telran.tickets.api.dto.BookedTickets;
-import telran.tickets.api.dto.BoughtTickets;
+import telran.tickets.api.dto.ClientTickets;
 import telran.tickets.api.dto.ClientProfile;
 import telran.tickets.api.dto.EditEvent;
 import telran.tickets.api.dto.EventClientRequest;
@@ -195,12 +194,12 @@ public class ServerAppl {
 		return clientRepository.changeProfile(request);
 	}
 	@GetMapping(APIConstants.CLIENT_TICKETS)
-	public BoughtTickets getBoughtTickets(@RequestParam String email) {
-		return new BoughtTickets(clientRepository.getBoughtTickets(email));
+	public ClientTickets getBoughtTickets(@RequestParam String email) {
+		return new ClientTickets(clientRepository.getBoughtTickets(email));
 	}
 	@GetMapping(APIConstants.CLIENT_BOOKED_TICKETS)
-	public BookedTickets getBookedTickets(@RequestParam String email) {
-		return new BookedTickets(clientRepository.getBookedTickets(email));
+	public ClientTickets getBookedTickets(@RequestParam String email) {
+		return new ClientTickets(clientRepository.getBookedTickets(email));
 	}
 	@GetMapping("/cleanorders")
 	public void cleanOrders() {

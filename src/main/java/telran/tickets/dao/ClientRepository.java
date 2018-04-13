@@ -2,7 +2,9 @@ package telran.tickets.dao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
-import telran.tickets.api.dto.ClientBookedTicket;
 import telran.tickets.api.dto.ClientProfile;
 import telran.tickets.api.dto.ClientTicket;
 import telran.tickets.api.dto.FavouriteRequest;
@@ -227,19 +228,18 @@ public class ClientRepository implements IClient {
 	@Scheduled(cron = "*/60 * * * * *")
 	public void checkSeat() {
 		Query query1 = em.createQuery("SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE");
-		if (!query1.getResultList().isEmpty()) {
+		List<Ticket> tickets = new ArrayList<>(query1.getResultList());
+		if (!tickets.isEmpty()) {
 			Query query = em.createQuery(
-					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
+					"SELECT e FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM localtimestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
 			List<Ticket> bookedSeats = new ArrayList<>(query.getResultList());
-			List<Long> ids = new ArrayList<>();
 			for (Ticket ticket : bookedSeats) {
-				ids.add(ticket.getTicketId());
+				Query query3 = em.createQuery("UPDATE EventSeat e SET e.isTaken = false, ticket_ticket_id = null WHERE ticket_ticket_id = ?1");
+				query3.setParameter(1, ticket.getTicketId());
+				query3.executeUpdate();
 			}
-			Query query3 = em.createQuery("UPDATE EventSeat e SET e.isTaken = false, ticket_ticket_id = null WHERE ticket_ticket_id IN ?1");
-			query3.setParameter(1, ids);
-			query3.executeUpdate();
 			Query query2 = em.createQuery(
-					"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
+					"DELETE FROM Ticket e WHERE e.paymentStarted IS FALSE AND EXTRACT(EPOCH FROM localtimestamp) - EXTRACT(EPOCH FROM e.bookingTime) >= 600");
 			query2.executeUpdate();
 		}
 	}
@@ -322,13 +322,11 @@ public class ClientRepository implements IClient {
 	}
 
 	@Override
-	public Iterable<ClientBookedTicket> getBookedTickets(String email) {
+	public Iterable<ClientTicket> getBookedTickets(String email) {
 		Client client = em.find(Client.class, email);
-		Set<ClientBookedTicket> bookedTickets = new HashSet<>();
+		Set<ClientTicket> bookedTickets = new HashSet<>();
 		for (Ticket ticket : client.getBookedTickets()) {
-			for (EventSeat e : ticket.getEventSeats()) {
-				bookedTickets.add(new ClientBookedTicket(e, email));
-			}
+			bookedTickets.add(new ClientTicket(ticket));
 		}
 		return bookedTickets;
 	}

@@ -3,7 +3,6 @@ package telran.tickets.interfaces;
 import java.io.IOException;
 import java.util.Set;
 
-import telran.tickets.api.dto.ClientBookedTicket;
 import telran.tickets.api.dto.ClientProfile;
 import telran.tickets.api.dto.ClientTicket;
 import telran.tickets.api.dto.FavouriteRequest;
@@ -29,7 +28,7 @@ public interface IClient {
 	ClientProfile getProfile(String phone);
 	ClientProfile changeProfile(ClientProfile clientWithNewInfo);
 	Iterable<ClientTicket> getBoughtTickets(String email);
-	Iterable<ClientBookedTicket> getBookedTickets(String email);
+	Iterable<ClientTicket> getBookedTickets(String email);
 	boolean deleteTicket(Long orderId);
 	public void checkSeat();
 	
