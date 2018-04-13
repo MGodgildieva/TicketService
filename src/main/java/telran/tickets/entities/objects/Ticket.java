@@ -18,7 +18,7 @@ import telran.tickets.entities.users.Client;
 public class Ticket {
 	@Id
 	private Long ticketId;
-	@OneToMany(mappedBy = "ticket")
+	@OneToMany(cascade = CascadeType.MERGE, mappedBy = "ticket")
 	private List<EventSeat> eventSeats;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date bookingTime;
