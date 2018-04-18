@@ -35,7 +35,7 @@ public class HallEventInfo {
 		this.hallName = hall.getHallName();
 		this.eventTitle = event.getTitle();
 		this.artist = event.getArtist();
-		this.date = new SimpleDateFormat("dd/MM/yyyy").format(event.getDate());
+		this.date = new SimpleDateFormat("dd MMMM yyyy").format(event.getDate());
 		this.ticketPriceRange = event.getPriceRange();
 		List<HallEventSeat> seats = new ArrayList<>();
 		for (EventSeat eventSeat : event.getSeats()) {
